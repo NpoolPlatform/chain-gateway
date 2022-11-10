@@ -5,11 +5,10 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/chain-manager v0.0.0-20221108152213-fd098148d909
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221110130343-f1dd340df3db
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221110132429-874a9b2c2aeb
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
 	github.com/NpoolPlatform/message v0.0.0-20221110124335-1d9d6903a80d
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.1
@@ -45,6 +44,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/hashicorp/consul/api v1.12.0 // indirect

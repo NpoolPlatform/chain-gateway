@@ -35,7 +35,7 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	infos, total, err := coinmwcli.GetCoins(ctx, in.GetConds(), int(in.GetOffset()), int(in.GetLimit()))
+	infos, total, err := coinmwcli.GetCoins(ctx, in.GetConds(), in.GetOffset(), in.GetLimit())
 	if err != nil {
 		logger.Sugar().Errorf("fail get coins: %v", err)
 		return &npool.GetCoinsResponse{}, status.Error(codes.Internal, err.Error())
@@ -43,6 +43,6 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 
 	return &npool.GetCoinsResponse{
 		Infos: infos,
-		Total: uint32(total),
+		Total: total,
 	}, nil
 }
