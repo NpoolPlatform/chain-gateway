@@ -2,7 +2,6 @@ package tx
 
 import (
 	"context"
-	"fmt"
 
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/tx"
 
@@ -14,7 +13,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 	tx1 "github.com/NpoolPlatform/chain-gateway/pkg/tx"
 )
 
@@ -31,13 +29,9 @@ func (s *Server) GetTxs(ctx context.Context, in *npool.GetTxsRequest) (*npool.Ge
 		}
 	}()
 
-	if app, err := appmwcli.GetApp(ctx, in.GetTargetAppID()); err != nil || app == nil {
-		return &npool.GetTxsResponse{}, status.Error(codes.InvalidArgument, fmt.Sprintf("appid is invalid: %v", err))
-	}
-
 	span = commontracer.TraceInvoker(span, "tx", "tx", "Create")
 
-	infos, total, err := tx1.GetTxs(ctx, in.GetTargetAppID(), in.GetOffset(), in.GetLimit())
+	infos, total, err := tx1.GetTxs(ctx, in.GetOffset(), in.GetLimit())
 	if err != nil {
 		return &npool.GetTxsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
