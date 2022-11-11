@@ -1,5 +1,5 @@
 //nolint:nolintlint,dupl
-package coin
+package appcoin
 
 import (
 	"context"
@@ -8,16 +8,18 @@ import (
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
 
-	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
-	coinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin"
+	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/appcoin"
 
 	"go.opentelemetry.io/otel"
 	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin"
+	commonpb "github.com/NpoolPlatform/message/npool"
+	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/appcoin"
+	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/appcoin"
+
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
 func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npool.GetCoinsResponse, error) {
@@ -36,9 +38,13 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	infos, total, err := coinmwcli.GetCoins(ctx, &coinmwpb.Conds{}, in.GetOffset(), in.GetLimit())
+	infos, total, err := appcoinmwcli.GetCoins(ctx, &appcoinmwpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: in.GetAppID(),
+		},
+	}, in.GetOffset(), in.GetLimit())
 	if err != nil {
-		logger.Sugar().Errorf("fail get coins: %v", err)
 		return &npool.GetCoinsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 

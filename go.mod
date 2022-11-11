@@ -4,10 +4,12 @@ go 1.17
 
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
+	github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c
 	github.com/NpoolPlatform/chain-manager v0.0.0-20221108152213-fd098148d909
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221111061641-d630546323fd
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221111065956-9e8a7f849f11
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
-	github.com/NpoolPlatform/message v0.0.0-20221111043400-8490e8215c0c
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20220821121920-9559f5776d15
+	github.com/NpoolPlatform/message v0.0.0-20221111075552-794ce11e110b
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/stretchr/testify v1.7.1
@@ -21,7 +23,6 @@ require (
 require (
 	ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e // indirect
 	entgo.io/ent v0.11.2 // indirect
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5 // indirect
 	github.com/Shonminh/apollo-client v0.4.0 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -94,11 +95,11 @@ require (
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
-	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
+	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 replace google.golang.org/grpc => github.com/grpc/grpc-go v1.41.0

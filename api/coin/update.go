@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin"
+	coinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin"
 )
 
 func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*npool.UpdateCoinResponse, error) {
@@ -32,14 +33,31 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		}
 	}()
 
-	if err := coinmw.ValidateUpdate(ctx, in.GetInfo()); err != nil {
+	req := &coinmwpb.CoinReq{
+		ID:                          &in.ID,
+		Presale:                     in.Presale,
+		ReservedAmount:              in.ReservedAmount,
+		ForPay:                      in.ForPay,
+		HomePage:                    in.HomePage,
+		Specs:                       in.Specs,
+		FeeCoinTypeID:               in.FeeCoinTypeID,
+		WithdrawFeeByStableUSD:      in.WithdrawFeeByStableUSD,
+		WithdrawFeeAmount:           in.WithdrawFeeAmount,
+		CollectFeeAmount:            in.CollectFeeAmount,
+		HotWalletFeeAmount:          in.HotWalletFeeAmount,
+		LowFeeAmount:                in.LowFeeAmount,
+		HotWalletAccountAmount:      in.HotWalletAccountAmount,
+		PaymentAccountCollectAmount: in.PaymentAccountCollectAmount,
+	}
+
+	if err := coinmw.ValidateUpdate(ctx, req); err != nil {
 		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	span = commontracer.TraceID(span, in.GetInfo().GetID())
+	span = commontracer.TraceID(span, in.GetID())
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Update")
 
-	info, err := coinmwcli.UpdateCoin(ctx, in.GetInfo())
+	info, err := coinmwcli.UpdateCoin(ctx, req)
 	if err != nil {
 		return &npool.UpdateCoinResponse{}, status.Error(codes.Internal, err.Error())
 	}
