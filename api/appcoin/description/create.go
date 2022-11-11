@@ -23,6 +23,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//nolint
 func (s *Server) CreateCoinDescription(
 	ctx context.Context,
 	in *npool.CreateCoinDescriptionRequest,
@@ -72,6 +73,7 @@ func (s *Server) CreateCoinDescription(
 	}, nil
 }
 
+//nolint
 func (s *Server) CreateAppCoinDescription(
 	ctx context.Context,
 	in *npool.CreateAppCoinDescriptionRequest,
