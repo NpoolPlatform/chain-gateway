@@ -37,12 +37,14 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 	req := &appcoinmwpb.CoinReq{
 		ID:                       &in.ID,
 		AppID:                    &in.AppID,
+		CoinTypeID:               &in.CoinTypeID,
 		Name:                     in.Name,
 		Logo:                     in.Logo,
 		ForPay:                   in.ForPay,
 		WithdrawAutoReviewAmount: in.WithdrawAutoReviewAmount,
 		MarketValue:              in.MarketValue,
 		SettlePercent:            in.SettlePercent,
+		Setter:                   &in.UserID,
 	}
 
 	if err := appcoinmw.ValidateUpdate(ctx, req); err != nil {
