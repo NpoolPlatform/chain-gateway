@@ -5,9 +5,9 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/chain-manager v0.0.0-20221108152213-fd098148d909
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221110132429-874a9b2c2aeb
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221111061641-d630546323fd
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
-	github.com/NpoolPlatform/message v0.0.0-20221110124335-1d9d6903a80d
+	github.com/NpoolPlatform/message v0.0.0-20221111043400-8490e8215c0c
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/stretchr/testify v1.7.1
