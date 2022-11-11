@@ -60,3 +60,40 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 		Total: total,
 	}, nil
 }
+
+func (s *Server) GetAppCoins(ctx context.Context, in *npool.GetAppCoinsRequest) (*npool.GetAppCoinsResponse, error) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetAppCoins")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
+	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
+
+	if _, err := uuid.Parse(in.GetTargetAppID()); err != nil {
+		return &npool.GetAppCoinsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	infos, total, err := appcoinmwcli.GetCoins(ctx, &appcoinmwpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: in.GetTargetAppID(),
+		},
+	}, in.GetOffset(), in.GetLimit())
+	if err != nil {
+		logger.Sugar().Errorw("GetAppCoins", "error", err)
+		return &npool.GetAppCoinsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetAppCoinsResponse{
+		Infos: infos,
+		Total: total,
+	}, nil
+}
