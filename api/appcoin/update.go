@@ -3,6 +3,7 @@ package appcoin
 
 import (
 	"context"
+	"fmt"
 
 	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
 
@@ -51,8 +52,8 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if _, err := appmwcli.GetApp(ctx, in.GetAppID()); err != nil {
-		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	if app, err := appmwcli.GetApp(ctx, in.GetAppID()); err != nil || app == nil {
+		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, fmt.Sprintf("appid is invalid: %v", err))
 	}
 	ac, err := appcoinmwcli.GetCoin(ctx, in.GetID())
 	if err != nil {
