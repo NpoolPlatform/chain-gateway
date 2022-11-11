@@ -10,15 +10,13 @@ import (
 
 	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 	appcoinmw "github.com/NpoolPlatform/chain-middleware/api/appcoin"
-
-	appcoin1 "github.com/NpoolPlatform/chain-gateway/pkg/appcoin"
+	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/appcoin"
 
 	"go.opentelemetry.io/otel"
 	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/appcoin"
 	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/appcoin"
 )
@@ -50,9 +48,11 @@ func (s *Server) CreateCoin(ctx context.Context, in *npool.CreateCoinRequest) (*
 
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Create")
 
-	info, err := appcoin1.CreateCoin(ctx, in.GetTargetAppID(), in.GetCoinTypeID())
+	info, err := appcoinmwcli.CreateCoin(ctx, &appcoinmwpb.CoinReq{
+		AppID:      &in.TargetAppID,
+		CoinTypeID: &in.CoinTypeID,
+	})
 	if err != nil {
-		logger.Sugar().Errorf("fail create coin: %v", err.Error())
 		return &npool.CreateCoinResponse{}, status.Error(codes.Internal, err.Error())
 	}
 

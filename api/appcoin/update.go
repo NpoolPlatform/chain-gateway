@@ -12,8 +12,6 @@ import (
 	appcoinmw "github.com/NpoolPlatform/chain-middleware/api/appcoin"
 	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/appcoin"
 
-	appcoin1 "github.com/NpoolPlatform/chain-gateway/pkg/appcoin"
-
 	"go.opentelemetry.io/otel"
 	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
@@ -65,7 +63,7 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 	span = commontracer.TraceID(span, in.GetID())
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Update")
 
-	info, err := appcoin1.UpdateCoin(ctx, req)
+	info, err := appcoinmwcli.UpdateCoin(ctx, req)
 	if err != nil {
 		return &npool.UpdateCoinResponse{}, status.Error(codes.Internal, err.Error())
 	}
