@@ -11,6 +11,7 @@ require (
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20220821121920-9559f5776d15
 	github.com/NpoolPlatform/message v0.0.0-20221113104316-4b807f18511d
+	github.com/NpoolPlatform/oracle-manager v0.0.0-20220930040048-64c639fd083e
 	github.com/NpoolPlatform/project-info-manager v0.0.0-20220930040722-2220ebe0dad6
 	github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f
 	github.com/go-resty/resty/v2 v2.7.0

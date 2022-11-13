@@ -14,6 +14,7 @@ import (
 	billingent "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent"
 	entcoinsetting "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent/coinsetting"
 
+	oracleent "github.com/NpoolPlatform/oracle-manager/pkg/db/ent"
 	projinfoent "github.com/NpoolPlatform/project-info-manager/pkg/db/ent"
 	coininfoent "github.com/NpoolPlatform/sphinx-coininfo/pkg/db/ent"
 
@@ -22,6 +23,7 @@ import (
 	constant "github.com/NpoolPlatform/go-service-framework/pkg/mysql/const"
 
 	billingconst "github.com/NpoolPlatform/cloud-hashing-billing/pkg/message/const"
+	oracleconst "github.com/NpoolPlatform/oracle-manager/pkg/message/const"
 	projinfoconst "github.com/NpoolPlatform/project-info-manager/pkg/message/const"
 	coininfoconst "github.com/NpoolPlatform/sphinx-coininfo/pkg/message/const"
 
@@ -208,6 +210,40 @@ func migrateProjectInfo(ctx context.Context) error {
 	return nil
 }
 
+func migrateCurrency(ctx context.Context, conn *sql.DB) error {
+	cli1 := oracleent.NewClient(oracleent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
+	currencies, err := cli1.
+		Currency.
+		Query().
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateCurency", "error", err)
+		return err
+	}
+
+	for _, currency := range currencies {
+		logger.Sugar().Infow("migrateCurrency", "Currency", currency)
+	}
+
+	return nil
+}
+
+func migrateOracle(ctx context.Context) error {
+	conn, err := open(oracleconst.ServiceName)
+	if err != nil {
+		logger.Sugar().Errorw("migrateOracle", "error", err)
+		return err
+	}
+	defer conn.Close()
+
+	if err := migrateCurrency(ctx, conn); err != nil {
+		logger.Sugar().Errorw("migrateOracle", "error", err)
+		return err
+	}
+
+	return nil
+}
+
 func Migrate(ctx context.Context) error {
 	if err := db.Init(); err != nil {
 		logger.Sugar().Errorw("Migrate", "error", err)
@@ -233,6 +269,11 @@ func Migrate(ctx context.Context) error {
 	}
 
 	// Migrate oracle
+	if err := migrateOracle(ctx); err != nil {
+		logger.Sugar().Errorw("Migrate", "error", err)
+		return err
+	}
+
 	// Migrate gas feeder
 	return nil
 }
