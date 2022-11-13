@@ -75,6 +75,8 @@ github.com/NpoolPlatform/chain-manager v0.0.0-20221111153000-8256cc47f7cc h1:1hW
 github.com/NpoolPlatform/chain-manager v0.0.0-20221111153000-8256cc47f7cc/go.mod h1:vJTjlhirVjakX9NThRBC9+0vSS8BmcoCIhrp6Z2m/XM=
 github.com/NpoolPlatform/chain-middleware v0.0.0-20221111154720-aa5178c86f68 h1:D54G5WcKgvWe+BLJv/0uf3MtqwUWhTzrmz2i1BXWlBk=
 github.com/NpoolPlatform/chain-middleware v0.0.0-20221111154720-aa5178c86f68/go.mod h1:dVDkuts8q4O+bjvxbGvKw+pXrHjd3jMJU0iahtA9I74=
+github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8 h1:Y9h2vRjzsO5/hKoRE9Edjm23iGjfAVm/RZKUPLGasDs=
+github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8/go.mod h1:xsuWIAMqgyYRSt4DFCWPhwsQJGOcJKZYICieDdf0gPg=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070/go.mod h1:QPI3Fu/AU5iUOUnf9EictZP1lqPQdPcVLqveIB2HovI=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c h1:VRcs8tOeXU9ryZ/rB656qCYzxx7TXNXbTsW2GSNOpXQ=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c/go.mod h1:/sor3E0i0XR8BaKInJwWC85aXLmbMFRNLdIuw+ed+ig=
@@ -85,6 +87,8 @@ github.com/NpoolPlatform/message v0.0.0-20220501030927-34f296682c0c/go.mod h1:i/
 github.com/NpoolPlatform/message v0.0.0-20220819134247-1dc75c85fe43/go.mod h1:8YXp4MghMHLZ9bBdQQyfjcRtLI2RbEHAQoNCejT2nZU=
 github.com/NpoolPlatform/message v0.0.0-20221111182531-804b2c8e41c8 h1:DazYvXDTA9dXhYOZEJSz2qZvRS56s0qr7ByMTB3VpYA=
 github.com/NpoolPlatform/message v0.0.0-20221111182531-804b2c8e41c8/go.mod h1:PPu6xSY6EEmKktC6azkYreJVM4gaGkmxuusqHok2IEA=
+github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f h1:tFiY+yRZbUr5m/UzkMD8xAO35qkbQPsL0e7zjJT8YJM=
+github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f/go.mod h1:DlZVXy/eIXjojDWYeB2A/3C/875Ru1Nob+mS9ZSwG3I=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=
