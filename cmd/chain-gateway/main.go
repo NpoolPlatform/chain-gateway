@@ -14,6 +14,7 @@ import (
 	redisconst "github.com/NpoolPlatform/go-service-framework/pkg/redis/const"
 
 	billingconst "github.com/NpoolPlatform/cloud-hashing-billing/pkg/message/const"
+	projinfoconst "github.com/NpoolPlatform/project-info-manager/pkg/message/const"
 	coininfoconst "github.com/NpoolPlatform/sphinx-coininfo/pkg/message/const"
 
 	cli "github.com/urfave/cli/v2"
@@ -39,6 +40,7 @@ func main() {
 		redisconst.RedisServiceName,
 		billingconst.ServiceName,
 		coininfoconst.ServiceName,
+		projinfoconst.ServiceName,
 	)
 	if err != nil {
 		logger.Sugar().Errorf("fail to create %v: %v", servicename.ServiceName, err)

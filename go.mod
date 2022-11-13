@@ -5,12 +5,13 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c
-	github.com/NpoolPlatform/chain-manager v0.0.0-20221111153000-8256cc47f7cc
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221111154720-aa5178c86f68
+	github.com/NpoolPlatform/chain-manager v0.0.0-20221113104052-e5af8f49aa9d
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221113104744-52df28aea750
 	github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20220821121920-9559f5776d15
-	github.com/NpoolPlatform/message v0.0.0-20221111182531-804b2c8e41c8
+	github.com/NpoolPlatform/message v0.0.0-20221113104316-4b807f18511d
+	github.com/NpoolPlatform/project-info-manager v0.0.0-20220930040722-2220ebe0dad6
 	github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
