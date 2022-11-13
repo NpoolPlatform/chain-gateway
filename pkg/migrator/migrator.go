@@ -14,6 +14,7 @@ import (
 	billingent "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent"
 	entcoinsetting "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent/coinsetting"
 
+	gasfeederent "github.com/NpoolPlatform/gas-feeder/pkg/db/ent"
 	oracleent "github.com/NpoolPlatform/oracle-manager/pkg/db/ent"
 	projinfoent "github.com/NpoolPlatform/project-info-manager/pkg/db/ent"
 	coininfoent "github.com/NpoolPlatform/sphinx-coininfo/pkg/db/ent"
@@ -23,10 +24,13 @@ import (
 	constant "github.com/NpoolPlatform/go-service-framework/pkg/mysql/const"
 
 	billingconst "github.com/NpoolPlatform/cloud-hashing-billing/pkg/message/const"
+	gasfeederconst "github.com/NpoolPlatform/gas-feeder/pkg/message/const"
 	oracleconst "github.com/NpoolPlatform/oracle-manager/pkg/message/const"
 	projinfoconst "github.com/NpoolPlatform/project-info-manager/pkg/message/const"
 	coininfoconst "github.com/NpoolPlatform/sphinx-coininfo/pkg/message/const"
 
+	_ "github.com/NpoolPlatform/gas-feeder/pkg/db/ent/runtime"
+	_ "github.com/NpoolPlatform/oracle-manager/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/project-info-manager/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/sphinx-coininfo/pkg/db/ent/runtime"
 )
@@ -244,6 +248,63 @@ func migrateOracle(ctx context.Context) error {
 	return nil
 }
 
+func migrateCoinGas(ctx context.Context, conn *sql.DB) error {
+	cli1 := gasfeederent.NewClient(gasfeederent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
+	gases, err := cli1.
+		CoinGas.
+		Query().
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinGas", "error", err)
+		return err
+	}
+
+	for _, gas := range gases {
+		logger.Sugar().Infow("migrateCoinGas", "Gas", gas)
+	}
+
+	return nil
+}
+
+func migrateDeposit(ctx context.Context, conn *sql.DB) error {
+	cli1 := gasfeederent.NewClient(gasfeederent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
+	deposits, err := cli1.
+		Deposit.
+		Query().
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateDeposit", "error", err)
+		return err
+	}
+
+	for _, deposit := range deposits {
+		logger.Sugar().Infow("migrateDeposit", "Deposit", deposit)
+	}
+
+	return nil
+}
+
+func migrateGasFeeder(ctx context.Context) error {
+	conn, err := open(gasfeederconst.ServiceName)
+	if err != nil {
+		logger.Sugar().Errorw("migrateGasFeeder", "error", err)
+		return err
+	}
+	defer conn.Close()
+
+	if err := migrateCoinGas(ctx, conn); err != nil {
+		logger.Sugar().Errorw("migrateGasFeeder", "error", err)
+		return err
+	}
+
+	if err := migrateDeposit(ctx, conn); err != nil {
+		logger.Sugar().Errorw("migrateGasFeeder", "error", err)
+		return err
+	}
+
+	return nil
+}
+
 func Migrate(ctx context.Context) error {
 	if err := db.Init(); err != nil {
 		logger.Sugar().Errorw("Migrate", "error", err)
@@ -275,5 +336,10 @@ func Migrate(ctx context.Context) error {
 	}
 
 	// Migrate gas feeder
+	if err := migrateGasFeeder(ctx); err != nil {
+		logger.Sugar().Errorw("Migrate", "error", err)
+		return err
+	}
+
 	return nil
 }
