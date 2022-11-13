@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/chain-manager/pkg/db"
+	"github.com/NpoolPlatform/chain-manager/pkg/db/ent"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	"github.com/shopspring/decimal"
 
 	billingent "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent"
 	entcoinsetting "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent/coinsetting"
@@ -17,6 +19,7 @@ import (
 	gasfeederent "github.com/NpoolPlatform/gas-feeder/pkg/db/ent"
 	oracleent "github.com/NpoolPlatform/oracle-manager/pkg/db/ent"
 	projinfoent "github.com/NpoolPlatform/project-info-manager/pkg/db/ent"
+
 	coininfoent "github.com/NpoolPlatform/sphinx-coininfo/pkg/db/ent"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
@@ -123,6 +126,8 @@ func migrateBilling(ctx context.Context) error {
 	return nil
 }
 
+var coinInfos = []*coininfoent.CoinInfo{}
+
 func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 	cli1 := coininfoent.NewClient(coininfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
 	coins, err := cli1.
@@ -134,11 +139,58 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	for _, coin := range coins {
-		logger.Sugar().Infow("_migrateCoinInfo", "Coin", coin)
+	coinInfos = coins
+
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+	infos, err := cli.
+		CoinBase.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
 	}
 
-	return nil
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, coin := range coins {
+			_, err := tx.
+				CoinBase.
+				Create().
+				SetID(coin.ID).
+				SetName(coin.Name).
+				SetUnit(coin.Unit).
+				SetLogo(coin.Logo).
+				SetPresale(coin.PreSale).
+				SetEnv(coin.Env).
+				SetReservedAmount(decimal.NewFromInt(int64(coin.ReservedAmount)).Div(decimal.NewFromInt(1000000000000))).
+				SetForPay(coin.ForPay).
+				Save(_ctx)
+			if err != nil {
+				return err
+			}
+
+			_, err = tx.
+				CoinExtra.
+				Create().
+				SetCoinTypeID(coin.ID).
+				SetHomePage(coin.HomePage).
+				SetSpecs(coin.Specs).
+				Save(_ctx)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
 
 func migrateCoinInfo(ctx context.Context) error {
