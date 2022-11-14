@@ -19,7 +19,6 @@ import (
 	gasfeederent "github.com/NpoolPlatform/gas-feeder/pkg/db/ent"
 	oracleent "github.com/NpoolPlatform/oracle-manager/pkg/db/ent"
 	projinfoent "github.com/NpoolPlatform/project-info-manager/pkg/db/ent"
-
 	coininfoent "github.com/NpoolPlatform/sphinx-coininfo/pkg/db/ent"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
@@ -32,10 +31,15 @@ import (
 	projinfoconst "github.com/NpoolPlatform/project-info-manager/pkg/message/const"
 	coininfoconst "github.com/NpoolPlatform/sphinx-coininfo/pkg/message/const"
 
+	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
+	appmwpb "github.com/NpoolPlatform/message/npool/appuser/mw/v1/app"
+
 	_ "github.com/NpoolPlatform/gas-feeder/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/oracle-manager/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/project-info-manager/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/sphinx-coininfo/pkg/db/ent/runtime"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -127,6 +131,10 @@ func migrateBilling(ctx context.Context) error {
 }
 
 var coinInfos = []*coininfoent.CoinInfo{}
+var coinProductInfos = []*projinfoent.CoinProductInfo{}
+var coinDescs = []*projinfoent.CoinDescription{}
+var apps = []*appmwpb.App{}
+var withdrawSetings = []*billingent.AppWithdrawSetting{}
 
 func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 	cli1 := coininfoent.NewClient(coininfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
@@ -140,6 +148,57 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 	}
 
 	coinInfos = coins
+
+	conn1, err := open(projinfoconst.ServiceName)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+	defer conn1.Close()
+
+	cli2 := projinfoent.NewClient(projinfoent.Driver(entsql.OpenDB(dialect.MySQL, conn1)))
+	prodInfos, err := cli2.
+		CoinProductInfo.
+		Query().
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+
+	conn2, err := open(billingconst.ServiceName)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+	defer conn2.Close()
+
+	cli3 := billingent.NewClient(billingent.Driver(entsql.OpenDB(dialect.MySQL, conn2)))
+	withdrawSettings, err := cli3.
+		AppWithdrawSetting.
+		Query().
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+
+	offset := int32(0)
+	limit := int32(1000)
+
+	for {
+		_apps, _, err := appmwcli.GetApps(ctx, offset, limit)
+		if err != nil {
+			logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+			return err
+		}
+		if len(_apps) == 0 {
+			break
+		}
+
+		apps = append(apps, _apps...)
+		offset += limit
+	}
 
 	cli, err := db.Client()
 	if err != nil {
@@ -187,6 +246,38 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 			if err != nil {
 				return err
 			}
+
+			for _, app := range apps {
+				productPage := ""
+				for _, prodInfo := range prodInfos {
+					if app.ID == prodInfo.AppID.String() && coin.ID == prodInfo.CoinTypeID {
+						productPage = prodInfo.ProductPage
+						break
+					}
+				}
+
+				withdrawAutoReviewAmount := decimal.NewFromInt(0)
+				for _, setting := range withdrawSettings {
+					if setting.AppID.String() == app.ID && coin.ID == setting.CoinTypeID {
+						withdrawAutoReviewAmount = decimal.NewFromInt(int64(setting.WithdrawAutoReviewCoinAmount)).Div(decimal.NewFromInt(1000000000000))
+					}
+				}
+
+				_, err := tx.
+					AppCoin.
+					Create().
+					SetAppID(uuid.MustParse(app.ID)).
+					SetCoinTypeID(coin.ID).
+					SetName(coin.Name).
+					SetLogo(coin.Logo).
+					SetForPay(coin.ForPay).
+					SetWithdrawAutoReviewAmount(withdrawAutoReviewAmount).
+					SetProductPage(productPage).
+					Save(_ctx)
+				if err != nil {
+					return err
+				}
+			}
 		}
 
 		return nil
@@ -211,13 +302,33 @@ func migrateCoinInfo(ctx context.Context) error {
 
 func migrateCoinProductInfo(ctx context.Context, conn *sql.DB) error {
 	cli1 := projinfoent.NewClient(projinfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
-	infos, err := cli1.
+	prodInfos, err := cli1.
 		CoinProductInfo.
 		Query().
 		All(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("migrateCoinProductInfo", "error", err)
 		return err
+	}
+
+	coinProductInfos = prodInfos
+
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinProductInfo", "error", err)
+		return err
+	}
+	infos, err := cli.
+		AppCoin.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinProductInfo", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
 	}
 
 	for _, info := range infos {
