@@ -34,6 +34,8 @@ import (
 	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 	appmwpb "github.com/NpoolPlatform/message/npool/appuser/mw/v1/app"
 
+	descmgrpb "github.com/NpoolPlatform/message/npool/chain/mgr/v1/appcoin/description"
+
 	_ "github.com/NpoolPlatform/gas-feeder/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/oracle-manager/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/project-info-manager/pkg/db/ent/runtime"
@@ -131,10 +133,10 @@ func migrateBilling(ctx context.Context) error {
 }
 
 var coinInfos = []*coininfoent.CoinInfo{}
-var coinProductInfos = []*projinfoent.CoinProductInfo{}
+var coinProdInfos = []*projinfoent.CoinProductInfo{}
 var coinDescs = []*projinfoent.CoinDescription{}
 var apps = []*appmwpb.App{}
-var withdrawSetings = []*billingent.AppWithdrawSetting{}
+var withdrawSettings = []*billingent.AppWithdrawSetting{}
 
 func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 	cli1 := coininfoent.NewClient(coininfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
@@ -166,6 +168,8 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
+	coinProdInfos = prodInfos
+
 	conn2, err := open(billingconst.ServiceName)
 	if err != nil {
 		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
@@ -174,7 +178,7 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 	defer conn2.Close()
 
 	cli3 := billingent.NewClient(billingent.Driver(entsql.OpenDB(dialect.MySQL, conn2)))
-	withdrawSettings, err := cli3.
+	_withdrawSettings, err := cli3.
 		AppWithdrawSetting.
 		Query().
 		All(ctx)
@@ -182,6 +186,8 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
 		return err
 	}
+
+	withdrawSettings = _withdrawSettings
 
 	offset := int32(0)
 	limit := int32(1000)
@@ -300,44 +306,6 @@ func migrateCoinInfo(ctx context.Context) error {
 	return nil
 }
 
-func migrateCoinProductInfo(ctx context.Context, conn *sql.DB) error {
-	cli1 := projinfoent.NewClient(projinfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
-	prodInfos, err := cli1.
-		CoinProductInfo.
-		Query().
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinProductInfo", "error", err)
-		return err
-	}
-
-	coinProductInfos = prodInfos
-
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinProductInfo", "error", err)
-		return err
-	}
-	infos, err := cli.
-		AppCoin.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinProductInfo", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
-
-	for _, info := range infos {
-		logger.Sugar().Infow("migrateCoinProductInfo", "CoinProductInfo", info)
-	}
-
-	return nil
-}
-
 func migrateCoinDescription(ctx context.Context, conn *sql.DB) error {
 	cli1 := projinfoent.NewClient(projinfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
 	descs, err := cli1.
@@ -349,11 +317,71 @@ func migrateCoinDescription(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	for _, desc := range descs {
-		logger.Sugar().Infow("migrateCoinDescription", "CoinDescription", desc)
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinDescription", "error", err)
+		return err
+	}
+	infos, err := cli.
+		CoinDescription.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinDescription", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
 	}
 
-	return nil
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, desc := range descs {
+			logger.Sugar().Infow("migrateCoinDescription", "CoinDescription", desc)
+			if desc.UsedFor != "PRODUCTDETAILS" {
+				logger.Sugar().Warnw("migrateCoinDescription", "UsedFor", desc.UsedFor)
+				continue
+			}
+
+			found := false
+			for _, app := range apps {
+				if app.ID == desc.AppID.String() {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				continue
+			}
+
+			found = false
+			for _, coin := range coinInfos {
+				if coin.ID == desc.CoinTypeID {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				continue
+			}
+
+			_, err := tx.
+				CoinDescription.
+				Create().
+				SetAppID(desc.AppID).
+				SetCoinTypeID(desc.CoinTypeID).
+				SetUsedFor(descmgrpb.UsedFor_ProductPage.String()).
+				SetTitle(desc.Title).
+				SetMessage(desc.Message).
+				Save(_ctx)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func migrateProjectInfo(ctx context.Context) error {
@@ -363,11 +391,6 @@ func migrateProjectInfo(ctx context.Context) error {
 		return err
 	}
 	defer conn.Close()
-
-	if err := migrateCoinProductInfo(ctx, conn); err != nil {
-		logger.Sugar().Errorw("migrateProjectInfo", "error", err)
-		return err
-	}
 
 	if err := migrateCoinDescription(ctx, conn); err != nil {
 		logger.Sugar().Errorw("migrateProjectInfo", "error", err)
@@ -480,29 +503,31 @@ func Migrate(ctx context.Context) error {
 		return err
 	}
 
-	// Migrate billing
-	if err := migrateBilling(ctx); err != nil {
-		logger.Sugar().Errorw("Migrate", "error", err)
-		return err
-	}
-
 	// Migrate project info
 	if err := migrateProjectInfo(ctx); err != nil {
 		logger.Sugar().Errorw("Migrate", "error", err)
 		return err
 	}
 
-	// Migrate oracle
-	if err := migrateOracle(ctx); err != nil {
-		logger.Sugar().Errorw("Migrate", "error", err)
-		return err
-	}
+	/*
+		// Migrate billing
+		if err := migrateBilling(ctx); err != nil {
+			logger.Sugar().Errorw("Migrate", "error", err)
+			return err
+		}
 
-	// Migrate gas feeder
-	if err := migrateGasFeeder(ctx); err != nil {
-		logger.Sugar().Errorw("Migrate", "error", err)
-		return err
-	}
+		// Migrate oracle
+		if err := migrateOracle(ctx); err != nil {
+			logger.Sugar().Errorw("Migrate", "error", err)
+			return err
+		}
+
+		// Migrate gas feeder
+		if err := migrateGasFeeder(ctx); err != nil {
+			logger.Sugar().Errorw("Migrate", "error", err)
+			return err
+		}
+	*/
 
 	return nil
 }
