@@ -1,9 +1,11 @@
+//nolint
 package migrator
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/NpoolPlatform/chain-manager/pkg/db"
@@ -14,7 +16,7 @@ import (
 	"github.com/shopspring/decimal"
 
 	billingent "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent"
-	entcoinsetting "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent/coinsetting"
+	entcointx "github.com/NpoolPlatform/cloud-hashing-billing/pkg/db/ent/coinaccounttransaction"
 
 	gasfeederent "github.com/NpoolPlatform/gas-feeder/pkg/db/ent"
 	oracleent "github.com/NpoolPlatform/oracle-manager/pkg/db/ent"
@@ -35,6 +37,7 @@ import (
 	appmwpb "github.com/NpoolPlatform/message/npool/appuser/mw/v1/app"
 
 	descmgrpb "github.com/NpoolPlatform/message/npool/chain/mgr/v1/appcoin/description"
+	txmgrpb "github.com/NpoolPlatform/message/npool/chain/mgr/v1/tx"
 
 	_ "github.com/NpoolPlatform/gas-feeder/pkg/db/ent/runtime"
 	_ "github.com/NpoolPlatform/oracle-manager/pkg/db/ent/runtime"
@@ -95,25 +98,79 @@ func open(hostname string) (conn *sql.DB, err error) {
 	return conn, nil
 }
 
-func migrateCoinSetting(ctx context.Context, conn *sql.DB) error {
+func migrateTx(ctx context.Context, conn *sql.DB) error {
 	cli1 := billingent.NewClient(billingent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
-	settings, err := cli1.
-		CoinSetting.
+	txs, err := cli1.
+		CoinAccountTransaction.
 		Query().
 		Where(
-			entcoinsetting.DeleteAt(0),
+			entcointx.DeleteAt(0),
 		).
 		All(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("migrateCoinSetting", "error", err)
+		logger.Sugar().Errorw("migrateTx", "error", err)
 		return err
 	}
 
-	for _, setting := range settings {
-		logger.Sugar().Infow("migrateCoinSetting", "Setting", setting)
-	}
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, tran := range txs {
+			logger.Sugar().Infow("migrateTx", "Tx", tx)
+			found := false
+			for _, coin := range coinInfos {
+				if tran.CoinTypeID == coin.ID {
+					found = true
+					break
+				}
+			}
 
-	return nil
+			if !found {
+				continue
+			}
+
+			state := txmgrpb.TxState_StateFail
+			switch tran.State {
+			case "created":
+				state = txmgrpb.TxState_StateCreated
+			case "wait":
+				state = txmgrpb.TxState_StateWait
+			case "paying":
+				state = txmgrpb.TxState_StateTransferring
+			case "successful":
+				state = txmgrpb.TxState_StateSuccessful
+			}
+
+			txType := txmgrpb.TxType_TxWithdraw
+			switch tran.CreatedFor {
+			case "collecting":
+				txType = txmgrpb.TxType_TxPaymentCollect
+			case "withdraw":
+			case "platform-benefit":
+				txType = txmgrpb.TxType_TxBenefit
+			case "compatible":
+				if strings.Contains(tran.Message, "transfer gas") {
+					txType = txmgrpb.TxType_TxFeedGas
+				}
+			}
+
+			_, err := tx.
+				Tran.
+				Create().
+				SetID(tran.ID).
+				SetCoinTypeID(tran.CoinTypeID).
+				SetFromAccountID(tran.FromAddressID).
+				SetToAccountID(tran.ToAddressID).
+				SetAmount(decimal.NewFromInt(int64(tran.Amount)).Div(decimal.NewFromInt(1000000000000))).
+				SetFeeAmount(decimal.NewFromInt(int64(tran.TransactionFee)).Div(decimal.NewFromInt(1000000000000))).
+				SetExtra(tran.Message).
+				SetState(state.String()).
+				SetType(txType.String()).
+				Save(_ctx)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func migrateBilling(ctx context.Context) error {
@@ -124,7 +181,25 @@ func migrateBilling(ctx context.Context) error {
 	}
 	defer conn.Close()
 
-	if err := migrateCoinSetting(ctx, conn); err != nil {
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+	infos, err := cli.
+		CoinBase.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
+	}
+
+	if err := migrateTx(ctx, conn); err != nil {
 		logger.Sugar().Errorw("migrateBilling", "error", err)
 		return err
 	}
@@ -133,12 +208,10 @@ func migrateBilling(ctx context.Context) error {
 }
 
 var coinInfos = []*coininfoent.CoinInfo{}
-var coinProdInfos = []*projinfoent.CoinProductInfo{}
-var coinDescs = []*projinfoent.CoinDescription{}
 var apps = []*appmwpb.App{}
 var withdrawSettings = []*billingent.AppWithdrawSetting{}
 
-func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
+func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error { //nolint
 	cli1 := coininfoent.NewClient(coininfoent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
 	coins, err := cli1.
 		CoinInfo.
@@ -167,8 +240,6 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error {
 		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
 		return err
 	}
-
-	coinProdInfos = prodInfos
 
 	conn2, err := open(billingconst.ServiceName)
 	if err != nil {
@@ -402,7 +473,6 @@ func migrateProjectInfo(ctx context.Context) error {
 func migrateCurrency(ctx context.Context, conn *sql.DB) error {
 	cli1 := oracleent.NewClient(oracleent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
 	currencies, err := cli1.
-		Debug().
 		Currency.
 		Query().
 		All(ctx)
@@ -489,7 +559,7 @@ func migrateOracle(ctx context.Context) error {
 	return nil
 }
 
-func migrateCoinGas(ctx context.Context, conn *sql.DB) error {
+func migrateCoinGas(ctx context.Context, conn *sql.DB) error { //nolint
 	cli1 := gasfeederent.NewClient(gasfeederent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
 	gases, err := cli1.
 		CoinGas.
@@ -500,29 +570,95 @@ func migrateCoinGas(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	for _, gas := range gases {
-		logger.Sugar().Infow("migrateCoinGas", "Gas", gas)
+	conn2, err := open(billingconst.ServiceName)
+	if err != nil {
+		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+		return err
 	}
+	defer conn2.Close()
 
-	return nil
-}
-
-func migrateDeposit(ctx context.Context, conn *sql.DB) error {
-	cli1 := gasfeederent.NewClient(gasfeederent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
-	deposits, err := cli1.
-		Deposit.
+	cli3 := billingent.NewClient(billingent.Driver(entsql.OpenDB(dialect.MySQL, conn2)))
+	coinSettings, err := cli3.
+		CoinSetting.
 		Query().
 		All(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("migrateDeposit", "error", err)
+		logger.Sugar().Errorw("migrateCoinGas", "error", err)
 		return err
 	}
 
-	for _, deposit := range deposits {
-		logger.Sugar().Infow("migrateDeposit", "Deposit", deposit)
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinGas", "error", err)
+		return err
+	}
+	infos, err := cli.
+		Setting.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateCoinGas", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
 	}
 
-	return nil
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, gas := range gases {
+			logger.Sugar().Infow("migrateCoinGas", "Gas", gas)
+			found := false
+			for _, coin := range coinInfos {
+				if coin.ID == gas.CoinTypeID {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				continue
+			}
+
+			found = false
+			for _, coin := range coinInfos {
+				if coin.ID == gas.GasCoinTypeID {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				continue
+			}
+
+			setting := &billingent.CoinSetting{}
+			for _, set := range coinSettings {
+				if set.CoinTypeID == gas.CoinTypeID {
+					setting = set
+					break
+				}
+			}
+
+			_, err = tx.
+				Setting.
+				Create().
+				SetCoinTypeID(gas.CoinTypeID).
+				SetFeeCoinTypeID(gas.GasCoinTypeID).
+				SetWithdrawFeeByStableUsd(true).
+				SetWithdrawFeeAmount(decimal.NewFromInt(2)).
+				SetCollectFeeAmount(decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(1000000000000))).
+				SetCollectFeeAmount(decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(200000000000))).
+				SetLowFeeAmount(decimal.NewFromInt(int64(gas.DepositThresholdLow)).Div(decimal.NewFromInt(1000000000000))).
+				SetHotWalletAccountAmount(decimal.NewFromInt(int64(setting.WarmAccountCoinAmount)).Div(decimal.NewFromInt(1000000000000))).
+				SetPaymentAccountCollectAmount(decimal.NewFromInt(int64(setting.PaymentAccountCoinAmount)).Div(decimal.NewFromInt(1000000000000))).
+				Save(_ctx)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func migrateGasFeeder(ctx context.Context) error {
@@ -534,11 +670,6 @@ func migrateGasFeeder(ctx context.Context) error {
 	defer conn.Close()
 
 	if err := migrateCoinGas(ctx, conn); err != nil {
-		logger.Sugar().Errorw("migrateGasFeeder", "error", err)
-		return err
-	}
-
-	if err := migrateDeposit(ctx, conn); err != nil {
 		logger.Sugar().Errorw("migrateGasFeeder", "error", err)
 		return err
 	}
@@ -570,20 +701,17 @@ func Migrate(ctx context.Context) error {
 		return err
 	}
 
-	/*
-		// Migrate billing
-		if err := migrateBilling(ctx); err != nil {
-			logger.Sugar().Errorw("Migrate", "error", err)
-			return err
-		}
+	// Migrate gas feeder
+	if err := migrateGasFeeder(ctx); err != nil {
+		logger.Sugar().Errorw("Migrate", "error", err)
+		return err
+	}
 
-
-			// Migrate gas feeder
-			if err := migrateGasFeeder(ctx); err != nil {
-				logger.Sugar().Errorw("Migrate", "error", err)
-				return err
-			}
-	*/
+	// Migrate billing
+	if err := migrateBilling(ctx); err != nil {
+		logger.Sugar().Errorw("Migrate", "error", err)
+		return err
+	}
 
 	return nil
 }
