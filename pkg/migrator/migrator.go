@@ -337,7 +337,6 @@ func migrateCoinDescription(ctx context.Context, conn *sql.DB) error {
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, desc := range descs {
-			logger.Sugar().Infow("migrateCoinDescription", "CoinDescription", desc)
 			if desc.UsedFor != "PRODUCTDETAILS" {
 				logger.Sugar().Warnw("migrateCoinDescription", "UsedFor", desc.UsedFor)
 				continue
@@ -403,6 +402,7 @@ func migrateProjectInfo(ctx context.Context) error {
 func migrateCurrency(ctx context.Context, conn *sql.DB) error {
 	cli1 := oracleent.NewClient(oracleent.Driver(entsql.OpenDB(dialect.MySQL, conn)))
 	currencies, err := cli1.
+		Debug().
 		Currency.
 		Query().
 		All(ctx)
@@ -411,11 +411,66 @@ func migrateCurrency(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	for _, currency := range currencies {
-		logger.Sugar().Infow("migrateCurrency", "Currency", currency)
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("migrateCurrency", "error", err)
+		return err
+	}
+	infos, err := cli.
+		ExchangeRate.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateCurrency", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
 	}
 
-	return nil
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, currency := range currencies {
+			logger.Sugar().Infow("migrateCurrency", "Currency", currency)
+			found := false
+			for _, app := range apps {
+				if app.ID == currency.AppID.String() {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				continue
+			}
+
+			found = false
+			for _, coin := range coinInfos {
+				if coin.ID == currency.CoinTypeID {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				continue
+			}
+
+			_, err := tx.
+				ExchangeRate.
+				Create().
+				SetAppID(currency.AppID).
+				SetCoinTypeID(currency.CoinTypeID).
+				SetMarketValue(decimal.NewFromInt(int64(currency.PriceVsUsdt)).Div(decimal.NewFromInt(1000000000000))).
+				SetSettleValue(decimal.NewFromInt(int64(currency.AppPriceVsUsdt)).Div(decimal.NewFromInt(1000000000000))).
+				SetSettlePercent(90).
+				Save(_ctx)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func migrateOracle(ctx context.Context) error {
@@ -509,6 +564,12 @@ func Migrate(ctx context.Context) error {
 		return err
 	}
 
+	// Migrate oracle
+	if err := migrateOracle(ctx); err != nil {
+		logger.Sugar().Errorw("Migrate", "error", err)
+		return err
+	}
+
 	/*
 		// Migrate billing
 		if err := migrateBilling(ctx); err != nil {
@@ -516,17 +577,12 @@ func Migrate(ctx context.Context) error {
 			return err
 		}
 
-		// Migrate oracle
-		if err := migrateOracle(ctx); err != nil {
-			logger.Sugar().Errorw("Migrate", "error", err)
-			return err
-		}
 
-		// Migrate gas feeder
-		if err := migrateGasFeeder(ctx); err != nil {
-			logger.Sugar().Errorw("Migrate", "error", err)
-			return err
-		}
+			// Migrate gas feeder
+			if err := migrateGasFeeder(ctx); err != nil {
+				logger.Sugar().Errorw("Migrate", "error", err)
+				return err
+			}
 	*/
 
 	return nil
