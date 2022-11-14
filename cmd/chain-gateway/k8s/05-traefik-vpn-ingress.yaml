@@ -21,7 +21,7 @@ spec:
     - host: api.npool.top
       http: &http_rules
         paths:
-          - path: /api/chain-gateway
+          - path: /api/chain
             backend:
               serviceName: chain-gateway
               servicePort: 50570
