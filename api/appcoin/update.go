@@ -43,6 +43,7 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		Logo:                     in.Logo,
 		ForPay:                   in.ForPay,
 		WithdrawAutoReviewAmount: in.WithdrawAutoReviewAmount,
+		DailyRewardAmount:        in.DailyRewardAmount,
 		MarketValue:              in.MarketValue,
 		SettlePercent:            in.SettlePercent,
 		Setter:                   &in.UserID,
