@@ -29,6 +29,14 @@ spec:
             backend:
               serviceName: chain-gateway
               servicePort: 50570
+          - path: /api/chain/v1/get/currencies
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/get/histories
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
@@ -41,7 +49,7 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: chain-gateway-traefik-app-ingress
+  name: chain-gateway-traefik-app-user-ingress
   namespace: kube-system
   annotations:
     k8s.kuboard.cn/displayName: chain-gateway-traefik-app
@@ -61,7 +69,47 @@ spec:
     - host: api.npool.top
       http: &http_rules
         paths:
-          - path: /api/chain
+          - path: /api/chain/v1/create/appcoin
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/update/appcoin
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/delete/appcoin
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/get/n/appcoins
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/create/coindescription
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/update/coindescription
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/create/app/coindescription
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/get/app/coindescriptions
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/get/txs
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/get/coins
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50570
+          - path: /api/chain/v1/update/coin
             backend:
               serviceName: chain-gateway
               servicePort: 50570
