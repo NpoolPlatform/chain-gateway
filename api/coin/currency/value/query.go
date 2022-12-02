@@ -4,24 +4,22 @@ package currencyvalue
 import (
 	"context"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-
-	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
-
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
-
-	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin/currency/value"
-	coinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin/currency/value"
+	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
+	coininfocli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
+	valuemwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin/currency/value"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	npoolpb "github.com/NpoolPlatform/message/npool"
+	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin/currency/value"
+	coinpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin"
+	valmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin/currency/value"
 
 	"go.opentelemetry.io/otel"
 	scodes "go.opentelemetry.io/otel/codes"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin/currency/value"
-
-	npoolpb "github.com/NpoolPlatform/message/npool"
 )
 
 func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesRequest) (*npool.GetCurrenciesResponse, error) {
@@ -40,7 +38,32 @@ func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesReque
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	infos, total, err := coinmwcli.GetCurrencies(ctx, nil, in.GetOffset(), in.GetLimit())
+	ofs := 0
+	lim := 1000
+	coins := []*coinpb.Coin{}
+	for {
+		coinInfos, _, err := coininfocli.GetCoins(ctx, nil, int32(ofs), int32(lim))
+		if err != nil {
+			return nil, err
+		}
+		if len(coinInfos) == 0 {
+			break
+		}
+		coins = append(coins, coinInfos...)
+		ofs += lim
+	}
+
+	coinTypeIDs := []string{}
+	for _, val := range coins {
+		coinTypeIDs = append(coinTypeIDs, val.ID)
+	}
+
+	infos, total, err := valuemwcli.GetCurrencies(ctx, &valmwpb.Conds{
+		CoinTypeIDs: &npoolpb.StringSliceVal{
+			Op:    cruder.EQ,
+			Value: coinTypeIDs,
+		},
+	}, in.GetOffset(), in.GetLimit())
 	if err != nil {
 		logger.Sugar().Errorf("fail get coins: %v", err)
 		return &npool.GetCurrenciesResponse{}, status.Error(codes.Internal, err.Error())
@@ -68,7 +91,7 @@ func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	conds := &coinmwpb.Conds{
+	conds := &valmwpb.Conds{
 		StartAt: &npoolpb.Uint32Val{
 			Op:    cruder.EQ,
 			Value: in.StartAt,
@@ -85,7 +108,7 @@ func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest
 			Value: *in.CoinTypeID,
 		}
 	}
-	infos, total, err := coinmwcli.GetHistories(ctx, conds, in.GetOffset(), in.GetLimit())
+	infos, total, err := valuemwcli.GetHistories(ctx, conds, in.GetOffset(), in.GetLimit())
 	if err != nil {
 		logger.Sugar().Errorf("fail get coins: %v", err)
 		return &npool.GetHistoriesResponse{}, status.Error(codes.Internal, err.Error())
