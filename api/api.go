@@ -8,8 +8,7 @@ import (
 	"github.com/NpoolPlatform/chain-gateway/api/appcoin"
 	"github.com/NpoolPlatform/chain-gateway/api/appcoin/description"
 	"github.com/NpoolPlatform/chain-gateway/api/coin"
-	feed "github.com/NpoolPlatform/chain-gateway/api/coin/currency/feed"
-	value "github.com/NpoolPlatform/chain-gateway/api/coin/currency/value"
+	"github.com/NpoolPlatform/chain-gateway/api/coin/currency"
 	"github.com/NpoolPlatform/chain-gateway/api/tx"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -23,8 +22,7 @@ type Server struct {
 func Register(server grpc.ServiceRegistrar) {
 	chaingw.RegisterGatewayServer(server, &Server{})
 	coin.Register(server)
-	feed.Register(server)
-	value.Register(server)
+	currency.Register(server)
 	appcoin.Register(server)
 	tx.Register(server)
 	description.Register(server)
@@ -37,10 +35,7 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := coin.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
-	if err := feed.RegisterGateway(mux, endpoint, opts); err != nil {
-		return err
-	}
-	if err := value.RegisterGateway(mux, endpoint, opts); err != nil {
+	if err := currency.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := appcoin.RegisterGateway(mux, endpoint, opts); err != nil {

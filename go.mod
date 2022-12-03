@@ -5,13 +5,13 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c
-	github.com/NpoolPlatform/chain-manager v0.0.0-20221123123131-ca38aa0d6f50
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221123123732-72b965ff7c9c
+	github.com/NpoolPlatform/chain-manager v0.0.0-20221203130956-3c945402bdf8
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221203135601-8e386fc5ed42
 	github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8
 	github.com/NpoolPlatform/gas-feeder v0.0.0-20220828054803-cd47a581db2f
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20221130093702-ba875f11785b
+	github.com/NpoolPlatform/message v0.0.0-20221203135357-5cc10080da55
 	github.com/NpoolPlatform/oracle-manager v0.0.0-20220930040048-64c639fd083e
 	github.com/NpoolPlatform/project-info-manager v0.0.0-20220930040722-2220ebe0dad6
 	github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f
@@ -22,7 +22,7 @@ require (
 	github.com/urfave/cli/v2 v2.5.0
 	go.opentelemetry.io/otel v1.8.0
 	go.opentelemetry.io/otel/trace v1.8.0
-	google.golang.org/grpc v1.50.1
+	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.0
 )
 
@@ -101,7 +101,7 @@ require (
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
