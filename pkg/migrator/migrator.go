@@ -605,37 +605,29 @@ func migrateCoinGas(ctx context.Context, conn *sql.DB) error { //nolint
 		return nil
 	}
 
+	logger.Sugar().Infow("migrateCoinGas", "Infos", len(infos))
+
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for _, gas := range gases {
-			logger.Sugar().Infow("migrateCoinGas", "Gas", gas)
-			found := false
-			for _, coin := range coinInfos {
-				if coin.ID == gas.CoinTypeID {
-					found = true
-					break
+		for _, coin := range coinInfos {
+			feeCoinTypeID := coin.ID
+			defaultFeeAmount := decimal.RequireFromString("0.001")
+			collectAmount := decimal.RequireFromString("1000")
+
+			logger.Sugar().Infow("migrateCoinGas", "Coin", coin.Name)
+
+			for _, gas := range gases {
+				for _, coin := range coinInfos {
+					if coin.ID == gas.CoinTypeID {
+						feeCoinTypeID = gas.GasCoinTypeID
+						defaultFeeAmount = decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(1000000000000))
+						break
+					}
 				}
 			}
 
-			if !found {
-				continue
-			}
-
-			found = false
-			for _, coin := range coinInfos {
-				if coin.ID == gas.GasCoinTypeID {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				continue
-			}
-
-			setting := &billingent.CoinSetting{}
 			for _, set := range coinSettings {
-				if set.CoinTypeID == gas.CoinTypeID {
-					setting = set
+				if set.CoinTypeID == coin.ID {
+					collectAmount = decimal.NewFromInt(int64(set.WarmAccountCoinAmount)).Div(decimal.NewFromInt(1000000000000))
 					break
 				}
 			}
@@ -643,15 +635,15 @@ func migrateCoinGas(ctx context.Context, conn *sql.DB) error { //nolint
 			_, err = tx.
 				Setting.
 				Create().
-				SetCoinTypeID(gas.CoinTypeID).
-				SetFeeCoinTypeID(gas.GasCoinTypeID).
+				SetCoinTypeID(coin.ID).
+				SetFeeCoinTypeID(feeCoinTypeID).
 				SetWithdrawFeeByStableUsd(true).
 				SetWithdrawFeeAmount(decimal.NewFromInt(2)).
-				SetCollectFeeAmount(decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(1000000000000))).
-				SetCollectFeeAmount(decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(200000000000))).
-				SetLowFeeAmount(decimal.NewFromInt(int64(gas.DepositThresholdLow)).Div(decimal.NewFromInt(1000000000000))).
-				SetHotWalletAccountAmount(decimal.NewFromInt(int64(setting.WarmAccountCoinAmount)).Div(decimal.NewFromInt(1000000000000))).
-				SetPaymentAccountCollectAmount(decimal.NewFromInt(int64(setting.PaymentAccountCoinAmount)).Div(decimal.NewFromInt(1000000000000))).
+				SetCollectFeeAmount(defaultFeeAmount).
+				SetHotWalletFeeAmount(defaultFeeAmount).
+				SetLowFeeAmount(defaultFeeAmount).
+				SetHotWalletAccountAmount(collectAmount).
+				SetPaymentAccountCollectAmount(collectAmount).
 				Save(_ctx)
 			if err != nil {
 				return err
