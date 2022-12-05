@@ -24,7 +24,7 @@ spec:
           - path: /api/chain
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top

@@ -58,16 +58,16 @@ metadata:
 spec:
   ports:
     - name: http
-      port: 50570
-      targetPort: 50570
+      port: 50580
+      targetPort: 50580
     - name: grpc
-      port: 50571
-      targetPort: 50571
+      port: 50581
+      targetPort: 50581
     - name: healthz
-      port: 50572
-      targetPort: 50572
+      port: 50582
+      targetPort: 50582
     - name: prometheus
-      port: 50573
-      targetPort: 50573
+      port: 50583
+      targetPort: 50583
   selector:
     app: chain-gateway

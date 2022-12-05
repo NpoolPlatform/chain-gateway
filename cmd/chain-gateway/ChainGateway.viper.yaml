@@ -1,10 +1,10 @@
 ---
 config:
   hostname: "chain-gateway.npool.top"
-  http_port: 50570
-  grpc_port: 50571
-  healthz_port: 50572
-  prometheus_port: 50573
+  http_port: 50580
+  grpc_port: 50581
+  healthz_port: 50582
+  prometheus_port: 50583
   appid: "89089012783789789719823798127398"
   serviceid: "94f9147c-60f0-11ed-b341-97315b5d37ad"
   logdir: "./"

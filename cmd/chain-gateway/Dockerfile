@@ -6,6 +6,6 @@ COPY chain-gateway /app
 
 ENTRYPOINT ["/app/chain-gateway"]
 
-EXPOSE 50570 50571 50572 50573
+EXPOSE 50580 50581 50582 50583
 
 CMD ["run"]

@@ -24,19 +24,19 @@ spec:
           - path: /api/chain/v1/get/appcoins
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/coindescriptions
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/currencies
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/histories
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
@@ -72,47 +72,47 @@ spec:
           - path: /api/chain/v1/create/appcoin
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/update/appcoin
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/delete/appcoin
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/n/appcoins
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/create/coindescription
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/update/coindescription
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/create/app/coindescription
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/app/coindescriptions
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/txs
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/get/coins
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
           - path: /api/chain/v1/update/coin
             backend:
               serviceName: chain-gateway
-              servicePort: 50570
+              servicePort: 50580
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
