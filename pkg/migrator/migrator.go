@@ -112,6 +112,25 @@ func migrateTx(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
+	cli, err := db.Client()
+	if err != nil {
+		logger.Sugar().Errorw("migrateTx", "error", err)
+		return err
+	}
+
+	infos, err := cli.
+		Tran.
+		Query().
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("migrateTx", "error", err)
+		return err
+	}
+	if len(infos) > 0 {
+		return nil
+	}
+
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, tran := range txs {
 			logger.Sugar().Infow("migrateTx", "Tx", tx)
@@ -180,24 +199,6 @@ func migrateBilling(ctx context.Context) error {
 		return err
 	}
 	defer conn.Close()
-
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
-		return err
-	}
-	infos, err := cli.
-		CoinBase.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
 
 	if err := migrateTx(ctx, conn); err != nil {
 		logger.Sugar().Errorw("migrateBilling", "error", err)
