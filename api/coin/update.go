@@ -48,6 +48,8 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		LowFeeAmount:                in.LowFeeAmount,
 		HotWalletAccountAmount:      in.HotWalletAccountAmount,
 		PaymentAccountCollectAmount: in.PaymentAccountCollectAmount,
+		Disabled:                    in.Disabled,
+		StableUSD:                   in.StableUSD,
 	}
 
 	if err := coinmw.ValidateUpdate(ctx, req); err != nil {
