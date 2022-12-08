@@ -47,6 +47,8 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		MarketValue:              in.MarketValue,
 		SettlePercent:            in.SettlePercent,
 		Setter:                   &in.UserID,
+		Disabled:                 in.Disabled,
+		ProductPage:              in.ProductPage,
 	}
 
 	if err := appcoinmw.ValidateUpdate(ctx, req); err != nil {
@@ -62,6 +64,12 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 	}
 	if ac.AppID != in.GetAppID() {
 		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, "permission denied")
+	}
+	if ac.CoinDisabled && !in.GetDisabled() {
+		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, "can not set Disabled to false when CoinDisabled is true")
+	}
+	if !ac.CoinForPay && in.GetForPay() {
+		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, "can not set ForPay to true when CoinForPay is false")
 	}
 
 	span = commontracer.TraceID(span, in.GetID())
