@@ -112,26 +112,20 @@ func migrateTx(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("migrateTx", "error", err)
-		return err
-	}
-
-	infos, err := cli.
-		Tran.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("migrateTx", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
-
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		infos, err := tx.
+			Tran.
+			Query().
+			Limit(1).
+			All(ctx)
+		if err != nil {
+			logger.Sugar().Errorw("migrateTx", "error", err)
+			return err
+		}
+		if len(infos) > 0 {
+			return nil
+		}
+
 		for _, tran := range txs {
 			logger.Sugar().Infow("migrateTx", "Tx", tx)
 			found := false
@@ -278,25 +272,20 @@ func _migrateCoinInfo(ctx context.Context, conn *sql.DB) error { //nolint
 		offset += limit
 	}
 
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
-		return err
-	}
-	infos, err := cli.
-		CoinBase.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
-
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		infos, err := tx.
+			CoinBase.
+			Query().
+			Limit(1).
+			All(ctx)
+		if err != nil {
+			logger.Sugar().Errorw("_migrateCoinInfo", "error", err)
+			return err
+		}
+		if len(infos) > 0 {
+			return nil
+		}
+
 		for _, coin := range coins {
 			_, err := tx.
 				CoinBase.
@@ -389,25 +378,20 @@ func migrateCoinDescription(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinDescription", "error", err)
-		return err
-	}
-	infos, err := cli.
-		CoinDescription.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinDescription", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
-
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		infos, err := tx.
+			CoinDescription.
+			Query().
+			Limit(1).
+			All(ctx)
+		if err != nil {
+			logger.Sugar().Errorw("migrateCoinDescription", "error", err)
+			return err
+		}
+		if len(infos) > 0 {
+			return nil
+		}
+
 		for _, desc := range descs {
 			if desc.UsedFor != "PRODUCTDETAILS" {
 				logger.Sugar().Warnw("migrateCoinDescription", "UsedFor", desc.UsedFor)
@@ -482,25 +466,20 @@ func migrateCurrency(ctx context.Context, conn *sql.DB) error {
 		return err
 	}
 
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("migrateCurrency", "error", err)
-		return err
-	}
-	infos, err := cli.
-		ExchangeRate.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("migrateCurrency", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
-
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		infos, err := tx.
+			ExchangeRate.
+			Query().
+			Limit(1).
+			All(ctx)
+		if err != nil {
+			logger.Sugar().Errorw("migrateCurrency", "error", err)
+			return err
+		}
+		if len(infos) > 0 {
+			return nil
+		}
+
 		for _, currency := range currencies {
 			logger.Sugar().Infow("migrateCurrency", "Currency", currency)
 			found := false
@@ -588,27 +567,20 @@ func migrateCoinGas(ctx context.Context, conn *sql.DB) error { //nolint
 		return err
 	}
 
-	cli, err := db.Client()
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinGas", "error", err)
-		return err
-	}
-	infos, err := cli.
-		Setting.
-		Query().
-		Limit(1).
-		All(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("migrateCoinGas", "error", err)
-		return err
-	}
-	if len(infos) > 0 {
-		return nil
-	}
-
-	logger.Sugar().Infow("migrateCoinGas", "Infos", len(infos))
-
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		infos, err := tx.
+			Setting.
+			Query().
+			Limit(1).
+			All(ctx)
+		if err != nil {
+			logger.Sugar().Errorw("migrateCoinGas", "error", err)
+			return err
+		}
+		if len(infos) > 0 {
+			return nil
+		}
+
 		for _, coin := range coinInfos {
 			feeCoinTypeID := coin.ID
 			defaultFeeAmount := decimal.RequireFromString("0.001")
