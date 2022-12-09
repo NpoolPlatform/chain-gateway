@@ -7,13 +7,13 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	constant1 "github.com/NpoolPlatform/chain-gateway/pkg/const"
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
 	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
 	coininfocli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
 	currencymwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin/currency"
 	npoolpb "github.com/NpoolPlatform/message/npool"
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin/currency"
-	coinpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin"
 	currencymwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin/currency"
 
 	"go.opentelemetry.io/otel"
@@ -39,23 +39,24 @@ func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesReque
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	ofs := 0
-	lim := 1000
-	coins := []*coinpb.Coin{}
-	for {
-		coinInfos, _, err := coininfocli.GetCoins(ctx, nil, int32(ofs), int32(lim))
-		if err != nil {
-			return nil, err
-		}
-		if len(coinInfos) == 0 {
-			break
-		}
-		coins = append(coins, coinInfos...)
-		ofs += lim
+	limit := constant1.DefaultRowLimit
+	if in.GetLimit() > 0 {
+		limit = in.GetLimit()
+	}
+
+	coinInfos, total, err := coininfocli.GetCoins(ctx, nil, in.GetOffset(), limit)
+	if err != nil {
+		return nil, err
+	}
+	if len(coinInfos) == 0 {
+		return &npool.GetCurrenciesResponse{
+			Infos: nil,
+			Total: total,
+		}, nil
 	}
 
 	coinTypeIDs := []string{}
-	for _, val := range coins {
+	for _, val := range coinInfos {
 		coinTypeIDs = append(coinTypeIDs, val.ID)
 	}
 
@@ -64,7 +65,7 @@ func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesReque
 			Op:    cruder.EQ,
 			Value: coinTypeIDs,
 		},
-	}, in.GetOffset(), in.GetLimit())
+	}, int32(0), int32(len(coinTypeIDs)))
 	if err != nil {
 		logger.Sugar().Errorf("fail get coins: %v", err)
 		return &npool.GetCurrenciesResponse{}, status.Error(codes.Internal, err.Error())
