@@ -71,10 +71,10 @@ github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0/go.mod h
 github.com/NpoolPlatform/appuser-manager v0.0.0-20220829153511-c579ddb3686d h1:Ee5L0BIxB5/xOtWFWq/gr/5fNU22W8dRN+TAcnRMO/U=
 github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c h1:o5/G7T0TE26YOS5l17vwp87hiyjl2Be36vBuTmdCbIo=
 github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c/go.mod h1:W9cYd7VNISgskaJ+m6SWNVD5fO4IHuNOovqc7HBLmvY=
-github.com/NpoolPlatform/chain-manager v0.0.0-20221209042701-13ffb38c6072 h1:IiSwv8BW5GvifWQb/n1ac+iAX4wGoz+KIzh0r22xP3w=
-github.com/NpoolPlatform/chain-manager v0.0.0-20221209042701-13ffb38c6072/go.mod h1:E9mDmqXN/R0PbZvN5sj1zTr63+rkSeSOYY0EKnJm9Qk=
-github.com/NpoolPlatform/chain-middleware v0.0.0-20221209072013-89cd7c8bcc51 h1:TKXQz15NLAkuRk5up1cW6xL6SzAEjj8bFN8t3wcC4fc=
-github.com/NpoolPlatform/chain-middleware v0.0.0-20221209072013-89cd7c8bcc51/go.mod h1:+nfDGln7238VSbl7ww8Uhg8GSB+b+oRmxIOyeBgNPV8=
+github.com/NpoolPlatform/chain-manager v0.0.0-20221209124743-eee46a8417e4 h1:G6eIGzAR+yGJZyQkrZ+ToA+kQnvbwbL23HyXylykuQE=
+github.com/NpoolPlatform/chain-manager v0.0.0-20221209124743-eee46a8417e4/go.mod h1:E9mDmqXN/R0PbZvN5sj1zTr63+rkSeSOYY0EKnJm9Qk=
+github.com/NpoolPlatform/chain-middleware v0.0.0-20221209124827-2441dcb267db h1:z7tJNgMXIY4HDGL2EMW1k+l/FoD8IKL0QFmgo7c7Lz4=
+github.com/NpoolPlatform/chain-middleware v0.0.0-20221209124827-2441dcb267db/go.mod h1:QTqLgZckoZ2TQeXLR+B1VMIOH0sMhSbI+j4WF6XRDfc=
 github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8 h1:Y9h2vRjzsO5/hKoRE9Edjm23iGjfAVm/RZKUPLGasDs=
 github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8/go.mod h1:xsuWIAMqgyYRSt4DFCWPhwsQJGOcJKZYICieDdf0gPg=
 github.com/NpoolPlatform/gas-feeder v0.0.0-20220828054803-cd47a581db2f h1:v+bjYSvZZzJbVvePyb/EJ+vyDEN/ChVu2ouSJM0a7qU=
