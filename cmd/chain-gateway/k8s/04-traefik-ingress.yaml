@@ -51,6 +51,8 @@ spec:
       http: *http_rules
     - host: api.lpsb.npool.top
       http: *http_rules
+    - host: api.development.npool.top
+      http: *http_rules
 
 ---
 
@@ -134,4 +136,6 @@ spec:
     - host: api.procyon.npool.top
       http: *http_rules
     - host: api.lpsb.npool.top
+      http: *http_rules
+    - host: api.development.npool.top
       http: *http_rules
