@@ -94,11 +94,11 @@ func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest
 
 	conds := &currencymwpb.Conds{
 		StartAt: &npoolpb.Uint32Val{
-			Op:    cruder.EQ,
+			Op:    cruder.GTE,
 			Value: in.StartAt,
 		},
 		EndAt: &npoolpb.Uint32Val{
-			Op:    cruder.EQ,
+			Op:    cruder.LTE,
 			Value: in.EndAt,
 		},
 	}
