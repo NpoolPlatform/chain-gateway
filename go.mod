@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c
-	github.com/NpoolPlatform/chain-manager v0.0.0-20221204052658-ed5e4546be8a
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221205095020-eee477e50f35
+	github.com/NpoolPlatform/chain-manager v0.0.0-20221209042701-13ffb38c6072
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221209072013-89cd7c8bcc51
 	github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8
 	github.com/NpoolPlatform/gas-feeder v0.0.0-20220828054803-cd47a581db2f
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
