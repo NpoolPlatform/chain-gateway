@@ -110,7 +110,7 @@ func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest
 	if in.CoinTypeID != nil {
 		conds.CoinTypeID = &npoolpb.StringVal{
 			Op:    cruder.EQ,
-			Value: *in.CoinTypeID,
+			Value: in.GetCoinTypeID(),
 		}
 	}
 	infos, total, err := currencymwcli.GetHistories(ctx, conds, in.GetOffset(), in.GetLimit())
