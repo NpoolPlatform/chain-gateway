@@ -92,15 +92,19 @@ func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	conds := &currencymwpb.Conds{
-		StartAt: &npoolpb.Uint32Val{
+	conds := &currencymwpb.Conds{}
+
+	if in.StartAt != nil {
+		conds.StartAt = &npoolpb.Uint32Val{
 			Op:    cruder.GTE,
-			Value: in.StartAt,
-		},
-		EndAt: &npoolpb.Uint32Val{
+			Value: in.GetStartAt(),
+		}
+	}
+	if in.EndAt != nil {
+		conds.EndAt = &npoolpb.Uint32Val{
 			Op:    cruder.LTE,
-			Value: in.EndAt,
-		},
+			Value: in.GetEndAt(),
+		}
 	}
 
 	if in.CoinTypeID != nil {
