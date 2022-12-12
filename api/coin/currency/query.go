@@ -60,12 +60,12 @@ func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesReque
 		coinTypeIDs = append(coinTypeIDs, val.ID)
 	}
 
-	infos, total, err := currencymwcli.GetCurrencies(ctx, &currencymwpb.Conds{
+	infos, err := currencymwcli.GetCurrencies(ctx, &currencymwpb.Conds{
 		CoinTypeIDs: &npoolpb.StringSliceVal{
-			Op:    cruder.EQ,
+			Op:    cruder.IN,
 			Value: coinTypeIDs,
 		},
-	}, int32(0), int32(len(coinTypeIDs)))
+	})
 	if err != nil {
 		logger.Sugar().Errorf("fail get coins: %v", err)
 		return &npool.GetCurrenciesResponse{}, status.Error(codes.Internal, err.Error())

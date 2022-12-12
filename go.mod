@@ -5,13 +5,13 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20220830145114-e7d2cde1cc9c
-	github.com/NpoolPlatform/chain-manager v0.0.0-20221209124743-eee46a8417e4
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20221209135024-9c0e0507d3b3
+	github.com/NpoolPlatform/chain-manager v0.0.0-20221211122205-5d3d0e268c98
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20221212074846-7db16f9626a6
 	github.com/NpoolPlatform/cloud-hashing-billing v0.0.0-20221108070616-8eb8c81dd6c8
 	github.com/NpoolPlatform/gas-feeder v0.0.0-20220828054803-cd47a581db2f
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20221209131209-fd911d466763
+	github.com/NpoolPlatform/message v0.0.0-20221212074526-c49dda9d25d0
 	github.com/NpoolPlatform/oracle-manager v0.0.0-20220930040048-64c639fd083e
 	github.com/NpoolPlatform/project-info-manager v0.0.0-20220930040722-2220ebe0dad6
 	github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f
