@@ -49,6 +49,7 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		Setter:                   &in.UserID,
 		Disabled:                 in.Disabled,
 		ProductPage:              in.ProductPage,
+		Display:                  in.Display,
 	}
 
 	if err := appcoinmw.ValidateUpdate(ctx, req); err != nil {
