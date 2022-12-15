@@ -10,6 +10,8 @@ import (
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
 
 	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
+	usermwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/user"
+
 	appcoinmw "github.com/NpoolPlatform/chain-middleware/api/appcoin"
 	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/appcoin"
 
@@ -70,6 +72,13 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 	}
 	if !ac.CoinForPay && in.GetForPay() {
 		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, "can not set ForPay to true when CoinForPay is false")
+	}
+	user, err := usermwcli.GetUser(ctx, in.GetAppID(), in.GetUserID())
+	if err != nil {
+		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if user == nil {
+		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, "UserID is invalid")
 	}
 
 	span = commontracer.TraceID(span, in.GetID())
