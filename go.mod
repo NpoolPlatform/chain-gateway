@@ -11,7 +11,7 @@ require (
 	github.com/NpoolPlatform/gas-feeder v0.0.0-20220828054803-cd47a581db2f
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20221219112815-e5c8ee5d76ef
+	github.com/NpoolPlatform/message v0.0.0-20221219133101-f18df6b61874
 	github.com/NpoolPlatform/oracle-manager v0.0.0-20220930040048-64c639fd083e
 	github.com/NpoolPlatform/project-info-manager v0.0.0-20220930040722-2220ebe0dad6
 	github.com/NpoolPlatform/sphinx-coininfo v0.0.0-20220930040119-1eb8b2e73e3f
