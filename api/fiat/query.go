@@ -1,5 +1,5 @@
 //nolint:nolintlint,dupl
-package fiatcurrency
+package fiat
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
 	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
-	fiatcurrencymwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin/fiatcurrency"
+	fiatcurrencymwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/fiat"
 	npoolpb "github.com/NpoolPlatform/message/npool"
-	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin/fiatcurrency"
-	fiatcurrencymwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin/fiatcurrency"
+	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/fiat"
+	fiatmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/fiat"
 
 	"go.opentelemetry.io/otel"
 	scodes "go.opentelemetry.io/otel/codes"
@@ -22,8 +22,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	fiatcurrencytypemgrcli "github.com/NpoolPlatform/chain-manager/pkg/client/coin/fiatcurrencytype"
-	fiatcurrencytypepb "github.com/NpoolPlatform/message/npool/chain/mgr/v1/coin/fiatcurrencytype"
+	fiatcurrencytypemgrcli "github.com/NpoolPlatform/chain-manager/pkg/client/fiat/currencytype"
+	fiatcurrencytypepb "github.com/NpoolPlatform/message/npool/chain/mgr/v1/fiat/currencytype"
 )
 
 func (s *Server) GetCoinFiatCurrencies(
@@ -58,6 +58,58 @@ func (s *Server) GetCoinFiatCurrencies(
 	}, nil
 }
 
+func (s *Server) GetFiatCurrency(
+	ctx context.Context,
+	in *npool.GetFiatCurrencyRequest,
+) (
+	*npool.GetFiatCurrencyResponse,
+	error,
+) {
+	var err error
+
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetCoins")
+	defer span.End()
+
+	defer func() {
+		if err != nil {
+			span.SetStatus(scodes.Error, err.Error())
+			span.RecordError(err)
+		}
+	}()
+
+	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
+
+	if in.GetFiatCurrencyTypeName() == "" {
+		logger.Sugar().Errorf("fiat currency type name is required")
+		return &npool.GetFiatCurrencyResponse{}, status.Error(codes.InvalidArgument, "fiat currency type name is required")
+	}
+	ftInfo, err := fiatcurrencytypemgrcli.GetFiatCurrencyTypeOnly(ctx, &fiatcurrencytypepb.Conds{
+		Name: &npoolpb.StringVal{
+			Op:    cruder.EQ,
+			Value: in.GetFiatCurrencyTypeName(),
+		},
+	})
+	if err != nil {
+		logger.Sugar().Errorf("fail get coins: %v", err)
+		return &npool.GetFiatCurrencyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	if ftInfo == nil {
+		logger.Sugar().Errorf("FiatCurrencyTypeName not exist")
+		return &npool.GetFiatCurrencyResponse{}, status.Error(codes.InvalidArgument, "FiatCurrencyTypeName not exist")
+	}
+
+	info, err := fiatcurrencymwcli.GetFiatCurrency(ctx, ftInfo.GetID())
+	if err != nil {
+		logger.Sugar().Errorf("fail get ciat currencies: %v", err)
+		return &npool.GetFiatCurrencyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetFiatCurrencyResponse{
+		Info: info,
+	}, nil
+}
+
 func (s *Server) GetHistories(
 	ctx context.Context,
 	in *npool.GetHistoriesRequest,
@@ -80,7 +132,7 @@ func (s *Server) GetHistories(
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Rows")
 
-	conds := &fiatcurrencymwpb.Conds{}
+	conds := &fiatmwpb.Conds{}
 
 	if in.StartAt != nil {
 		conds.StartAt = &npoolpb.Uint32Val{
