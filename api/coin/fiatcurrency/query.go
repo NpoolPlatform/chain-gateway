@@ -3,6 +3,7 @@ package fiatcurrency
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -25,7 +26,13 @@ import (
 	fiatcurrencytypepb "github.com/NpoolPlatform/message/npool/chain/mgr/v1/coin/fiatcurrencytype"
 )
 
-func (s *Server) GetCoinFiatCurrencies(ctx context.Context, in *npool.GetCoinFiatCurrenciesRequest) (*npool.GetCoinFiatCurrenciesResponse, error) {
+func (s *Server) GetCoinFiatCurrencies(
+	ctx context.Context,
+	in *npool.GetCoinFiatCurrenciesRequest,
+) (
+	*npool.GetCoinFiatCurrenciesResponse,
+	error,
+) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetCoins")
@@ -51,7 +58,13 @@ func (s *Server) GetCoinFiatCurrencies(ctx context.Context, in *npool.GetCoinFia
 	}, nil
 }
 
-func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest) (*npool.GetHistoriesResponse, error) {
+func (s *Server) GetHistories(
+	ctx context.Context,
+	in *npool.GetHistoriesRequest,
+) (
+	*npool.GetHistoriesResponse,
+	error,
+) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetCoins")
@@ -100,7 +113,11 @@ func (s *Server) GetHistories(ctx context.Context, in *npool.GetHistoriesRequest
 	}, nil
 }
 
-func (s *Server) GetFiatCurrencyTypes(ctx context.Context, in *npool.GetFiatCurrencyTypesRequest) (*npool.GetFiatCurrencyTypesResponse, error) {
+func (s *Server) GetFiatCurrencyTypes(
+	ctx context.Context,
+	in *npool.GetFiatCurrencyTypesRequest,
+) (*npool.GetFiatCurrencyTypesResponse, error,
+) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetCoinFiatCurrencies")
@@ -123,7 +140,13 @@ func (s *Server) GetFiatCurrencyTypes(ctx context.Context, in *npool.GetFiatCurr
 	}, nil
 }
 
-func (s *Server) CreateFiatCurrencyType(ctx context.Context, in *npool.CreateFiatCurrencyTypeRequest) (*npool.CreateFiatCurrencyTypeResponse, error) {
+func (s *Server) CreateFiatCurrencyType(
+	ctx context.Context,
+	in *npool.CreateFiatCurrencyTypeRequest,
+) (
+	*npool.CreateFiatCurrencyTypeResponse,
+	error,
+) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetCoinFiatCurrencies")
@@ -165,7 +188,13 @@ func (s *Server) CreateFiatCurrencyType(ctx context.Context, in *npool.CreateFia
 	}, nil
 }
 
-func (s *Server) UpdateFiatCurrencyType(ctx context.Context, in *npool.UpdateFiatCurrencyTypeRequest) (*npool.UpdateFiatCurrencyTypeResponse, error) {
+func (s *Server) UpdateFiatCurrencyType(
+	ctx context.Context,
+	in *npool.UpdateFiatCurrencyTypeRequest,
+) (
+	*npool.UpdateFiatCurrencyTypeResponse,
+	error,
+) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetCoinFiatCurrencies")
