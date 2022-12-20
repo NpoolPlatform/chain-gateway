@@ -231,6 +231,7 @@ func (s *Server) CreateFiatCurrencyType(
 
 	info, err := fiatcurrencytypemgrcli.CreateFiatCurrencyType(ctx, &fiatcurrencytypepb.FiatCurrencyTypeReq{
 		Name: &in.Name,
+		Logo: &in.Logo,
 	})
 	if err != nil {
 		return nil, err
@@ -285,6 +286,7 @@ func (s *Server) UpdateFiatCurrencyType(
 	info, err := fiatcurrencytypemgrcli.UpdateFiatCurrencyType(ctx, &fiatcurrencytypepb.FiatCurrencyTypeReq{
 		ID:   &in.ID,
 		Name: &in.Name,
+		Logo: &in.Logo,
 	})
 	if err != nil {
 		return nil, err
