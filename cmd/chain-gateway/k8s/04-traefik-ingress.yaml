@@ -37,6 +37,23 @@ spec:
             backend:
               serviceName: chain-gateway
               servicePort: 50580
+
+          - path: /api/chain/v1/get/fiatcurrency
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/get/coinfiatcurrencies
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/get/fiatcurrencyhistories
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/get/fiatcurrencytypes
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
@@ -123,6 +140,16 @@ spec:
             backend:
               serviceName: chain-gateway
               servicePort: 50580
+
+          - path: /api/chain/v1/create/fiatcurrencytype
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/update/fiatcurrencytype
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
