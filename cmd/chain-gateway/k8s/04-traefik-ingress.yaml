@@ -29,11 +29,11 @@ spec:
             backend:
               serviceName: chain-gateway
               servicePort: 50580
-          - path: /api/chain/v1/get/currencies
+          - path: /api/chain/v1/get/coincurrencies
             backend:
               serviceName: chain-gateway
               servicePort: 50580
-          - path: /api/chain/v1/get/histories
+          - path: /api/chain/v1/get/coincurrencyhistories
             backend:
               serviceName: chain-gateway
               servicePort: 50580
