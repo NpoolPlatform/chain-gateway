@@ -127,7 +127,6 @@ func migrateTx(ctx context.Context, conn *sql.DB) error {
 		}
 
 		for _, tran := range txs {
-			logger.Sugar().Infow("migrateTx", "Tx", tx)
 			found := false
 			for _, coin := range coinInfos {
 				if tran.CoinTypeID == coin.ID {
