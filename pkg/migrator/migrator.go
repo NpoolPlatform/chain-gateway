@@ -589,12 +589,10 @@ func migrateCoinGas(ctx context.Context, conn *sql.DB) error { //nolint
 			logger.Sugar().Infow("migrateCoinGas", "Coin", coin.Name)
 
 			for _, gas := range gases {
-				for _, coin := range coinInfos {
-					if coin.ID == gas.CoinTypeID {
-						feeCoinTypeID = gas.GasCoinTypeID
-						defaultFeeAmount = decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(1000000000000))
-						break
-					}
+				if coin.ID == gas.CoinTypeID {
+					feeCoinTypeID = gas.GasCoinTypeID
+					defaultFeeAmount = decimal.NewFromInt(int64(gas.DepositAmount)).Div(decimal.NewFromInt(1000000000000))
+					break
 				}
 			}
 
