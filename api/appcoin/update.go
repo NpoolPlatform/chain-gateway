@@ -55,6 +55,7 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		ProductPage:              in.ProductPage,
 		Display:                  in.Display,
 		DisplayIndex:             in.DisplayIndex,
+		MaxAmountPerWithdraw:     in.MaxAmountPerWithdraw,
 	}
 
 	if err := appcoinmw.ValidateUpdate(ctx, req); err != nil {
