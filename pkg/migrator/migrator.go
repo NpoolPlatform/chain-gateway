@@ -19,7 +19,7 @@ func Migrate(ctx context.Context) error {
 		_, err := cli.
 			AppCoin.
 			Update().
-			SetMaxAmountPerWithdraw(decimal.NewFromInt(40000)).
+			SetMaxAmountPerWithdraw(decimal.NewFromInt(40000)). //nolint
 			SetDailyRewardAmount(decimal.NewFromInt(0)).
 			Save(_ctx)
 		if err != nil {
@@ -29,7 +29,7 @@ func Migrate(ctx context.Context) error {
 		_, err = cli.
 			Setting.
 			Update().
-			SetLeastTransferAmount(decimal.RequireFromString("0.1")).
+			SetLeastTransferAmount(decimal.RequireFromString("0.1")). //nolint
 			Save(_ctx)
 		if err != nil {
 			return err
