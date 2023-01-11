@@ -3,11 +3,11 @@ module github.com/NpoolPlatform/chain-gateway
 go 1.17
 
 require (
-	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230111062013-f804f8850e22
+	github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c
 	github.com/NpoolPlatform/chain-manager v0.0.0-20230111060923-748aaab9e86d
 	github.com/NpoolPlatform/chain-middleware v0.0.0-20230111062408-7bc4b269c1d4
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20220927113434-7c153f087a8c
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20221102072657-7fcc5e6f1012
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
 	github.com/NpoolPlatform/message v0.0.0-20230110162534-83df43757858
 	github.com/go-resty/resty/v2 v2.7.0
@@ -21,7 +21,13 @@ require (
 	google.golang.org/protobuf v1.28.0
 )
 
-require github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
+require (
+	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
+	github.com/kylelemons/godebug v1.1.0 // indirect
+	github.com/miekg/dns v1.1.43 // indirect
+	github.com/sergi/go-diff v1.1.0 // indirect
+	github.com/spaolacci/murmur3 v1.1.0 // indirect
+)
 
 require (
 	ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e // indirect
@@ -110,3 +116,5 @@ replace google.golang.org/grpc => github.com/grpc/grpc-go v1.41.0
 replace entgo.io/ent => entgo.io/ent v0.11.2
 
 replace ariga.io/atlas => ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e
+
+replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190204201341-e444a5086c43
