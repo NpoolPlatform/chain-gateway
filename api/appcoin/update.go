@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 
+	appcoin1 "github.com/NpoolPlatform/chain-gateway/pkg/appcoin"
+
 	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
@@ -89,11 +91,10 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 	span = commontracer.TraceID(span, in.GetID())
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Update")
 
-	info, err := appcoinmwcli.UpdateCoin(ctx, req)
+	info, err := appcoin1.UpdateAppCoin(ctx, req)
 	if err != nil {
-		return &npool.UpdateCoinResponse{}, status.Error(codes.Internal, err.Error())
+		return nil, err
 	}
-
 	return &npool.UpdateCoinResponse{
 		Info: info,
 	}, nil

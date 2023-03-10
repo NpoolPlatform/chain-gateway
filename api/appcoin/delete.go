@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 
+	appcoin1 "github.com/NpoolPlatform/chain-gateway/pkg/appcoin"
+
 	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
@@ -47,7 +49,7 @@ func (s *Server) DeleteCoin(ctx context.Context, in *npool.DeleteCoinRequest) (*
 	span = commontracer.TraceID(span, in.GetID())
 	span = commontracer.TraceInvoker(span, "coin", "coin", "Delete")
 
-	info, err := appcoinmwcli.DeleteCoin(ctx, in.GetID())
+	info, err := appcoin1.DeleteAppCoin(ctx, in.GetID())
 	if err != nil {
 		return &npool.DeleteCoinResponse{}, status.Error(codes.Internal, err.Error())
 	}
