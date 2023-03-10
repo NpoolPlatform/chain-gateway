@@ -49,9 +49,10 @@ func GetAppCoins(ctx context.Context, appID string, offset, limit int32) ([]*npo
 	}
 	infos := []*npool.Coin{}
 	for _, val := range rows {
+		goodID := ""
 		defaultGood, ok := defaultGoodMap[val.CoinTypeID]
-		if !ok {
-			continue
+		if ok {
+			goodID = defaultGood.GoodID
 		}
 		infos = append(infos, &npool.Coin{
 			ID:                          val.ID,
@@ -99,7 +100,7 @@ func GetAppCoins(ctx context.Context, appID string, offset, limit int32) ([]*npo
 			DisplayIndex:                val.DisplayIndex,
 			MaxAmountPerWithdraw:        val.MaxAmountPerWithdraw,
 			LeastTransferAmount:         val.LeastTransferAmount,
-			DefaultGoodID:               defaultGood.GoodID,
+			DefaultGoodID:               goodID,
 		})
 	}
 	return infos, total, nil
@@ -124,6 +125,10 @@ func GetAppCoin(ctx context.Context, id string) (*npool.Coin, error) {
 	})
 	if err != nil {
 		return nil, err
+	}
+	goodID := ""
+	if goodInfo != nil {
+		goodID = goodInfo.GoodID
 	}
 	return &npool.Coin{
 		ID:                          row.ID,
@@ -171,7 +176,7 @@ func GetAppCoin(ctx context.Context, id string) (*npool.Coin, error) {
 		DisplayIndex:                row.DisplayIndex,
 		MaxAmountPerWithdraw:        row.MaxAmountPerWithdraw,
 		LeastTransferAmount:         row.LeastTransferAmount,
-		DefaultGoodID:               goodInfo.GoodID,
+		DefaultGoodID:               goodID,
 	}, nil
 }
 
