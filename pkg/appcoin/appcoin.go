@@ -226,10 +226,14 @@ func DeleteAppCoin(ctx context.Context, id string) (*npool.Coin, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = appdefaultgood.DeleteAppDefaultGood(ctx, defaultGoodInfo.ID)
-	if err != nil {
-		return nil, err
+
+	if defaultGoodInfo != nil {
+		_, err = appdefaultgood.DeleteAppDefaultGood(ctx, defaultGoodInfo.ID)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	_, err = appcoinmwcli.DeleteCoin(ctx, id)
 	if err != nil {
 		return nil, err
