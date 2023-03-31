@@ -7,20 +7,14 @@ import (
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
 	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
 
-	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/appcoin"
-
 	"go.opentelemetry.io/otel"
 	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	commonpb "github.com/NpoolPlatform/message/npool"
-	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/appcoin"
-	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/appcoin"
-
+	appcoin1 "github.com/NpoolPlatform/chain-gateway/pkg/appcoin"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-
+	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/appcoin"
 	"github.com/google/uuid"
 )
 
@@ -44,12 +38,7 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 		return &npool.GetCoinsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, total, err := appcoinmwcli.GetCoins(ctx, &appcoinmwpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: in.GetAppID(),
-		},
-	}, in.GetOffset(), in.GetLimit())
+	infos, total, err := appcoin1.GetAppCoins(ctx, in.GetAppID(), in.GetOffset(), in.GetLimit())
 	if err != nil {
 		logger.Sugar().Errorw("GetCoins", "error", err)
 		return &npool.GetCoinsResponse{}, status.Error(codes.Internal, err.Error())
@@ -81,12 +70,7 @@ func (s *Server) GetAppCoins(ctx context.Context, in *npool.GetAppCoinsRequest) 
 		return &npool.GetAppCoinsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, total, err := appcoinmwcli.GetCoins(ctx, &appcoinmwpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: in.GetTargetAppID(),
-		},
-	}, in.GetOffset(), in.GetLimit())
+	infos, total, err := appcoin1.GetAppCoins(ctx, in.GetTargetAppID(), in.GetOffset(), in.GetLimit())
 	if err != nil {
 		logger.Sugar().Errorw("GetAppCoins", "error", err)
 		return &npool.GetAppCoinsResponse{}, status.Error(codes.Internal, err.Error())
