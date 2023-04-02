@@ -44,7 +44,7 @@ func Migrate(ctx context.Context) error {
 			_, err := tx.
 				Setting.
 				UpdateOneID(info.ID).
-				SetHotLowFeeAmount(info.LowFeeAmount.Mul(decimal.NewFromInt(3))).
+				SetHotLowFeeAmount(info.LowFeeAmount.Mul(decimal.NewFromInt(3))). //nolint
 				Save(_ctx)
 			if err != nil {
 				return err
