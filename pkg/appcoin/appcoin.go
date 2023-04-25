@@ -101,6 +101,7 @@ func GetAppCoins(ctx context.Context, appID string, offset, limit int32) ([]*npo
 			MaxAmountPerWithdraw:        val.MaxAmountPerWithdraw,
 			LeastTransferAmount:         val.LeastTransferAmount,
 			DefaultGoodID:               goodID,
+			NeedMemo:                    val.NeedMemo,
 		})
 	}
 	return infos, total, nil
@@ -177,6 +178,7 @@ func GetAppCoin(ctx context.Context, id string) (*npool.Coin, error) {
 		MaxAmountPerWithdraw:        row.MaxAmountPerWithdraw,
 		LeastTransferAmount:         row.LeastTransferAmount,
 		DefaultGoodID:               goodID,
+		NeedMemo:                    row.NeedMemo,
 	}, nil
 }
 
