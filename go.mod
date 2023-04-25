@@ -5,12 +5,12 @@ go 1.17
 require (
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230301082018-29f2a9e4bed7
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20230221094657-688f81366495
-	github.com/NpoolPlatform/chain-manager v0.0.0-20230403083739-c1436e6bd67a
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20230403084036-0d823ee66ae1
+	github.com/NpoolPlatform/chain-manager v0.0.0-20230425040012-0846c1644138
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20230425041144-c0559ac8bbf3
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20221102072657-7fcc5e6f1012
 	github.com/NpoolPlatform/good-middleware v0.0.0-20230331110615-5a0a0621e322
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20230331105746-d35da1f1c402
+	github.com/NpoolPlatform/message v0.0.0-20230425035327-8b47065ea6bc
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
@@ -23,8 +23,9 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/compute v1.14.0 // indirect
 	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
+	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
 )
 
 require (
