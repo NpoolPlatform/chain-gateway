@@ -5,7 +5,7 @@ import (
 
 	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/app/coin"
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/app/coin"
-	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/appcoin"
+	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/app/coin"
 )
 
 func (h *Handler) CreateCoin(ctx context.Context) (*npool.Coin, error) {
