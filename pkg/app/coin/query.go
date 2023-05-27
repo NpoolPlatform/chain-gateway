@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/good-middleware/pkg/client/appdefaultgood"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/app/coin"
 	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/app/coin"
 	appgoodmgrpb "github.com/NpoolPlatform/message/npool/good/mgr/v1/appdefaultgood"
@@ -124,4 +125,29 @@ func (h *Handler) GetCoin(ctx context.Context) (*npool.Coin, error) {
 	}
 
 	return infos[0], nil
+}
+
+func (h *Handler) GetCoins(ctx context.Context) ([]*npool.Coin, uint32, error) {
+	conds := &appcoinmwpb.Conds{}
+	if h.AppID != nil {
+		conds.AppID = &basetypes.StringVal{Op: cruder.EQ, Value: *h.AppID}
+	}
+
+	infos, total, err := appcoinmwcli.GetCoins(ctx, conds, h.Offset, h.Limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	handler := &queryHandler{
+		Handler: h,
+		infos:   infos,
+		total:   total,
+	}
+
+	_infos, err := handler.formalize(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return _infos, total, nil
 }
