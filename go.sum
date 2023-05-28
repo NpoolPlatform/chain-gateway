@@ -62,6 +62,8 @@ github.com/NpoolPlatform/chain-middleware v0.0.0-20230425041144-c0559ac8bbf3 h1:
 github.com/NpoolPlatform/chain-middleware v0.0.0-20230425041144-c0559ac8bbf3/go.mod h1:7EBrMwmrcspPW0f/ZOOAxxsPUTyRdBXL5ZvkkIcFTqQ=
 github.com/NpoolPlatform/chain-middleware v0.0.0-20230527112141-9df089b48286 h1:6yGdPq25/zQbSipB8yE/v7jVcc/SJU41B3vYA/GwuQA=
 github.com/NpoolPlatform/chain-middleware v0.0.0-20230527112141-9df089b48286/go.mod h1:2rOjMlw5QPowjAi1bIxcjOB5mpY6dBHCDb2ZWTKMQio=
+github.com/NpoolPlatform/chain-middleware v0.0.0-20230528101710-dff0a01a057c h1:rIL3rzw5gX1Qjm2dRoXLIcrOHsqBiGFBJt0KmNslUCU=
+github.com/NpoolPlatform/chain-middleware v0.0.0-20230528101710-dff0a01a057c/go.mod h1:2rOjMlw5QPowjAi1bIxcjOB5mpY6dBHCDb2ZWTKMQio=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20230412082654-0f8f9e7ae58d h1:LIzncKCI9pOcFubxViWu3tJoJNa79zGzGaZu88+ZdKU=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20230412082654-0f8f9e7ae58d/go.mod h1:Kh7DMkWnYOMHxEKq7QfJqbxm1HaUPkhTNN74lfHQxyE=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20230509081417-267df92cab6d h1:IcjF038u7F+QFxP9D+MBZ0LLaWSaFaJ3VLRm0RzJMbY=
@@ -83,6 +85,8 @@ github.com/NpoolPlatform/message v0.0.0-20230528042549-818a394924cc h1:VT/riMbti
 github.com/NpoolPlatform/message v0.0.0-20230528042549-818a394924cc/go.mod h1:siMqIrLuxDkKaqlPyeNSXCfvGsiEwmDBoEqgXMXFyjc=
 github.com/NpoolPlatform/message v0.0.0-20230528055031-0cebad209cdd h1:ej9bajj+aLRHTionBK17RaIVtOMNnT7H9Q+I7OucIg0=
 github.com/NpoolPlatform/message v0.0.0-20230528055031-0cebad209cdd/go.mod h1:siMqIrLuxDkKaqlPyeNSXCfvGsiEwmDBoEqgXMXFyjc=
+github.com/NpoolPlatform/message v0.0.0-20230528100631-89db060a3b2c h1:Qq/ndsEhARQK0kVxe8jrdpLP4XkN/TTOrB5WqTxBtKU=
+github.com/NpoolPlatform/message v0.0.0-20230528100631-89db060a3b2c/go.mod h1:siMqIrLuxDkKaqlPyeNSXCfvGsiEwmDBoEqgXMXFyjc=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=
