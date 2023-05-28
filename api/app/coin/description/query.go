@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//nolint:lll
 func (s *Server) GetCoinDescriptions(ctx context.Context, in *npool.GetCoinDescriptionsRequest) (*npool.GetCoinDescriptionsResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
@@ -44,6 +45,7 @@ func (s *Server) GetCoinDescriptions(ctx context.Context, in *npool.GetCoinDescr
 	}, nil
 }
 
+//nolint:lll
 func (s *Server) GetAppCoinDescriptions(ctx context.Context, in *npool.GetAppCoinDescriptionsRequest) (*npool.GetAppCoinDescriptionsResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
