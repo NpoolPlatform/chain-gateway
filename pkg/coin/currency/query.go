@@ -16,12 +16,9 @@ func (h *Handler) GetCurrency(ctx context.Context) (*currencymwpb.Currency, erro
 }
 
 func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, uint32, error) {
-	return currencymwcli.GetCurrencies(
-		ctx,
-		&currencymwpb.Conds{
-			CoinTypeIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: h.CoinTypeIDs},
-		},
-		h.Offset,
-		h.Limit,
-	)
+	conds := &currencymwpb.Conds{}
+	if len(h.CoinTypeIDs) > 0 {
+		conds.CoinTypeIDs = &basetypes.StringSliceVal{Op: cruder.IN, Value: h.CoinTypeIDs}
+	}
+	return currencymwcli.GetCurrencies(ctx, conds, h.Offset, h.Limit)
 }
