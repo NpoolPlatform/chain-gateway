@@ -12,33 +12,33 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) GetFiats(ctx context.Context, in *npool.GetFiatsRequest) (*npool.GetFiatsResponse, error) {
+func (s *Server) CreateFiat(ctx context.Context, in *npool.CreateFiatRequest) (*npool.CreateFiatResponse, error) {
 	handler, err := fiat1.NewHandler(
 		ctx,
-		fiat1.WithOffset(in.GetOffset()),
-		fiat1.WithLimit(in.GetLimit()),
+		fiat1.WithName(&in.Name),
+		fiat1.WithUnit(&in.Unit),
+		fiat1.WithLogo(&in.Logo),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetFiats",
+			"CreateFiat",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.GetFiatsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CreateFiatResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, total, err := handler.GetFiats(ctx)
+	info, err := handler.CreateFiat(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetFiats",
+			"CreateFiat",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.GetFiatsResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.CreateFiatResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetFiatsResponse{
-		Infos: infos,
-		Total: total,
+	return &npool.CreateFiatResponse{
+		Info: info,
 	}, nil
 }

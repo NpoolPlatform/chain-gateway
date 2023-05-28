@@ -12,33 +12,34 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) GetFiats(ctx context.Context, in *npool.GetFiatsRequest) (*npool.GetFiatsResponse, error) {
+func (s *Server) UpdateFiat(ctx context.Context, in *npool.UpdateFiatRequest) (*npool.UpdateFiatResponse, error) {
 	handler, err := fiat1.NewHandler(
 		ctx,
-		fiat1.WithOffset(in.GetOffset()),
-		fiat1.WithLimit(in.GetLimit()),
+		fiat1.WithID(&in.ID),
+		fiat1.WithName(in.Name),
+		fiat1.WithLogo(in.Logo),
+		fiat1.WithUnit(in.Unit),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetFiats",
+			"UpdateFiat",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.GetFiatsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.UpdateFiatResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, total, err := handler.GetFiats(ctx)
+	info, err := handler.UpdateFiat(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetFiats",
+			"UpdateFiat",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.GetFiatsResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.UpdateFiatResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetFiatsResponse{
-		Infos: infos,
-		Total: total,
+	return &npool.UpdateFiatResponse{
+		Info: info,
 	}, nil
 }

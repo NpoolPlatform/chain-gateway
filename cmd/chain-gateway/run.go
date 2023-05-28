@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/NpoolPlatform/chain-gateway/api"
 	"github.com/NpoolPlatform/chain-gateway/pkg/migrator"
-	"github.com/NpoolPlatform/chain-manager/pkg/db"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -25,10 +24,6 @@ var runCmd = &cli.Command{
 	Usage:   "Run the daemon",
 	Action: func(c *cli.Context) error {
 		if err := migrator.Migrate(c.Context); err != nil {
-			return err
-		}
-
-		if err := db.Init(); err != nil {
 			return err
 		}
 

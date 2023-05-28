@@ -4,9 +4,9 @@ package migrator
 import (
 	"context"
 
-	"github.com/NpoolPlatform/chain-manager/pkg/db"
-	"github.com/NpoolPlatform/chain-manager/pkg/db/ent"
-	entsetting "github.com/NpoolPlatform/chain-manager/pkg/db/ent/setting"
+	"github.com/NpoolPlatform/chain-middleware/pkg/db"
+	"github.com/NpoolPlatform/chain-middleware/pkg/db/ent"
+	entsetting "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/setting"
 
 	"github.com/shopspring/decimal"
 )
