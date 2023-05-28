@@ -3,7 +3,7 @@ package description
 import (
 	"context"
 
-	"github.com/NpoolPlatform/message/npool/chain/gw/v1/appcoin/description"
+	"github.com/NpoolPlatform/message/npool/chain/gw/v1/app/coin/description"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

@@ -7,7 +7,7 @@ import (
 	descmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/app/coin/description"
 )
 
-func (h *Handler) CreateCoin(ctx context.Context) (*descmwpb.CoinDescription, error) {
+func (h *Handler) CreateCoinDescription(ctx context.Context) (*descmwpb.CoinDescription, error) {
 	return descmwcli.CreateCoinDescription(ctx, &descmwpb.CoinDescriptionReq{
 		AppID:      h.AppID,
 		CoinTypeID: h.CoinTypeID,
