@@ -11,6 +11,7 @@ import (
 	coincurrency "github.com/NpoolPlatform/chain-gateway/api/coin/currency"
 	coincurrencyfeed "github.com/NpoolPlatform/chain-gateway/api/coin/currency/feed"
 	coincurrencyhis "github.com/NpoolPlatform/chain-gateway/api/coin/currency/history"
+	coinfiat "github.com/NpoolPlatform/chain-gateway/api/coin/fiat"
 	coinfiatcurrencyhis "github.com/NpoolPlatform/chain-gateway/api/coin/fiat/currency/history"
 	"github.com/NpoolPlatform/chain-gateway/api/fiat"
 	fiatcurrency "github.com/NpoolPlatform/chain-gateway/api/fiat/currency"
@@ -29,6 +30,7 @@ type Server struct {
 func Register(server grpc.ServiceRegistrar) {
 	chaingw.RegisterGatewayServer(server, &Server{})
 	coin.Register(server)
+	coinfiat.Register(server)
 	coincurrency.Register(server)
 	coincurrencyfeed.Register(server)
 	coincurrencyhis.Register(server)
@@ -47,6 +49,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := coin.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := coinfiat.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := coincurrency.RegisterGateway(mux, endpoint, opts); err != nil {
