@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
+	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
+
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -60,9 +63,12 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		_, err := uuid.Parse(*id)
+		_app, err := appmwcli.GetApp(ctx, *id)
 		if err != nil {
 			return err
+		}
+		if _app == nil {
+			return fmt.Errorf("invalid app")
 		}
 		h.AppID = id
 		return nil
@@ -74,9 +80,12 @@ func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		_, err := uuid.Parse(*id)
+		_coin, err := coinmwcli.GetCoin(ctx, *id)
 		if err != nil {
 			return err
+		}
+		if _coin == nil {
+			return fmt.Errorf("invalid coin")
 		}
 		h.CoinTypeID = id
 		return nil

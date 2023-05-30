@@ -10,6 +10,7 @@ import (
 	entcurrencyfeed "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currencyfeed"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 
 	servicename "github.com/NpoolPlatform/chain-gateway/pkg/servicename"
@@ -108,6 +109,12 @@ func Migrate(ctx context.Context) error {
 					Only(_ctx)
 				if err != nil {
 					if !ent.IsNotFound(err) {
+						logger.Sugar().Errorw(
+							"Migrate",
+							"CoinName", _coin.Name,
+							"FeedCoinName", _feedCoinName,
+							"CoinTypeID", _coin.ID,
+						)
 						return err
 					}
 				}
