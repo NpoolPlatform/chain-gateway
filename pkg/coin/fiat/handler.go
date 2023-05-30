@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	constant "github.com/NpoolPlatform/chain-gateway/pkg/const"
 	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
 	fiatmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/fiat"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
@@ -110,6 +111,9 @@ func WithOffset(offset int32) func(context.Context, *Handler) error {
 
 func WithLimit(limit int32) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if limit == 0 {
+			limit = constant.DefaultRowLimit
+		}
 		h.Limit = limit
 		return nil
 	}
