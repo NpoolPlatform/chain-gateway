@@ -26,6 +26,8 @@ require (
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.0.7 // indirect
 	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/go-redis/redis/v8 v8.11.4 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.2.0 // indirect
