@@ -26,17 +26,21 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 		ids = append(ids, info.CoinTypeID)
 	}
 
-	infos, _, err := appdefaultgood.GetAppDefaultGoods(ctx, &appgoodmgrpb.Conds{
-		AppID:       &commonpb.StringVal{Op: cruder.EQ, Value: *h.AppID},
+	conds := &appgoodmgrpb.Conds{
 		CoinTypeIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: ids},
-	}, 0, int32(len(ids)))
+	}
+	if h.AppID != nil {
+		conds.AppID = &commonpb.StringVal{Op: cruder.EQ, Value: *h.AppID}
+	}
+
+	infos, _, err := appdefaultgood.GetAppDefaultGoods(ctx, conds, 0, int32(len(ids)))
 	if err != nil {
 		return nil, err
 	}
 
 	infoMap := map[string]*appgoodmgrpb.AppDefaultGood{}
 	for _, info := range infos {
-		infoMap[info.CoinTypeID] = info
+		infoMap[info.AppID+info.CoinTypeID] = info
 	}
 
 	_infos := []*npool.Coin{}
@@ -90,7 +94,7 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 			NeedMemo:                    info.NeedMemo,
 		}
 
-		dinfo, ok := infoMap[info.CoinTypeID]
+		dinfo, ok := infoMap[info.AppID+info.CoinTypeID]
 		if ok {
 			_info.DefaultGoodID = &dinfo.GoodID
 		}
@@ -112,6 +116,8 @@ func (h *Handler) GetCoin(ctx context.Context) (*npool.Coin, error) {
 	if info == nil {
 		return nil, nil
 	}
+
+	h.AppID = &info.AppID
 
 	handler := &queryHandler{
 		Handler: h,
