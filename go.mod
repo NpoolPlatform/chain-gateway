@@ -4,11 +4,11 @@ go 1.17
 
 require (
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20230518061816-62bd589c0f63
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20230529074822-417c1768a12e
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20230530033145-2ca1a5bfd870
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230509081417-267df92cab6d
 	github.com/NpoolPlatform/good-middleware v0.0.0-20230331110615-5a0a0621e322
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20230529080454-40f1dbf71c2b
+	github.com/NpoolPlatform/message v0.0.0-20230530030914-30800253bd09
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
@@ -16,12 +16,11 @@ require (
 	github.com/urfave/cli/v2 v2.5.0
 	go.opentelemetry.io/otel v1.8.0
 	go.opentelemetry.io/otel/trace v1.8.0
-	google.golang.org/grpc v1.54.0
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/grpc v1.55.0
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
-	cloud.google.com/go/compute v1.14.0 // indirect
 	github.com/ThreeDotsLabs/watermill v1.2.0 // indirect
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.0.7 // indirect
 	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
@@ -56,7 +55,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
@@ -107,7 +106,7 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
+	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
