@@ -2,8 +2,9 @@ package tx
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/google/uuid"
+	appmwcli "github.com/NpoolPlatform/appuser-middleware/pkg/client/app"
 )
 
 type Handler struct {
@@ -27,9 +28,12 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		_, err := uuid.Parse(*id)
+		_app, err := appmwcli.GetApp(ctx, *id)
 		if err != nil {
 			return err
+		}
+		if _app == nil {
+			return fmt.Errorf("invalid app")
 		}
 		h.AppID = id
 		return nil

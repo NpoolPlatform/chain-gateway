@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
+	fiatmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/fiat"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/google/uuid"
@@ -41,9 +43,12 @@ func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		_, err := uuid.Parse(*id)
+		_coin, err := coinmwcli.GetCoin(ctx, *id)
 		if err != nil {
 			return err
+		}
+		if _coin == nil {
+			return fmt.Errorf("invalid coin")
 		}
 		h.CoinTypeID = id
 		return nil
@@ -67,9 +72,12 @@ func WithFiatID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		_, err := uuid.Parse(*id)
+		_fiat, err := fiatmwcli.GetFiat(ctx, *id)
 		if err != nil {
 			return err
+		}
+		if _fiat == nil {
+			return fmt.Errorf("invalid fiat")
 		}
 		h.FiatID = id
 		return nil
