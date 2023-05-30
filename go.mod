@@ -3,6 +3,7 @@ module github.com/NpoolPlatform/chain-gateway
 go 1.17
 
 require (
+	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230526062616-0124082ee3b5
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20230518061816-62bd589c0f63
 	github.com/NpoolPlatform/chain-middleware v0.0.0-20230530033145-2ca1a5bfd870
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230509081417-267df92cab6d
