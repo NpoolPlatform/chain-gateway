@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/const"
+	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -160,9 +161,12 @@ func WithFeeCoinTypeID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		_, err := uuid.Parse(*id)
+		_coin, err := coinmwcli.GetCoin(ctx, *id)
 		if err != nil {
 			return err
+		}
+		if _coin == nil {
+			return fmt.Errorf("invalid feecoin")
 		}
 		h.FeeCoinTypeID = id
 		return nil
