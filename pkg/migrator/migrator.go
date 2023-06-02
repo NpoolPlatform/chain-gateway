@@ -17,6 +17,8 @@ import (
 
 	servicename "github.com/NpoolPlatform/chain-gateway/pkg/servicename"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+
+	"github.com/google/uuid"
 )
 
 func lockKey() string {
@@ -146,7 +148,7 @@ func Migrate(ctx context.Context) error {
 		}
 
 		limit := 1000
-		kept := map[string]bool{}
+		kept := map[string]uuid.UUID{}
 
 		for {
 			logger.Sugar().Errorw(
@@ -162,7 +164,7 @@ func Migrate(ctx context.Context) error {
 					entcurrency.DeletedAt(0),
 				).
 				Limit(limit).
-				Order(ent.Desc(entcurrency.FieldCreatedAt)).
+				Order(ent.Desc(entcurrency.FieldUpdatedAt)).
 				All(_ctx)
 			logger.Sugar().Errorw(
 				"Migrate",
@@ -177,7 +179,18 @@ func Migrate(ctx context.Context) error {
 				)
 				return err
 			}
-			if len(currencies) == 0 {
+
+			updatable := false
+			for _, currency := range currencies {
+				keptKey := fmt.Sprintf("%v:%v", currency.CoinTypeID, currency.FeedType)
+				_kept, ok := kept[keptKey]
+				if !ok || _kept != currency.ID {
+					updatable = true
+					break
+				}
+			}
+
+			if !updatable {
 				logger.Sugar().Errorw(
 					"Migrate",
 					"Limit", limit,
@@ -212,9 +225,12 @@ func Migrate(ctx context.Context) error {
 
 			for _, currency := range currencies {
 				keptKey := fmt.Sprintf("%v:%v", currency.CoinTypeID, currency.FeedType)
-				_, ok := kept[keptKey]
+				_kept, ok := kept[keptKey]
 				if !ok {
-					kept[keptKey] = true
+					kept[keptKey] = currency.ID
+					continue
+				}
+				if _kept == currency.ID {
 					continue
 				}
 
