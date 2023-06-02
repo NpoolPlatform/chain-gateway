@@ -145,14 +145,12 @@ func Migrate(ctx context.Context) error {
 			}
 		}
 
-		offset := 0
 		limit := 1000
 		kept := map[string]bool{}
 
 		for {
 			logger.Sugar().Errorw(
 				"Migrate",
-				"Offset", offset,
 				"Limit", limit,
 				"State", "Query start",
 			)
@@ -164,19 +162,16 @@ func Migrate(ctx context.Context) error {
 					entcurrency.DeletedAt(0),
 				).
 				Limit(limit).
-				Offset(offset).
 				Order(ent.Desc(entcurrency.FieldCreatedAt)).
 				All(_ctx)
 			logger.Sugar().Errorw(
 				"Migrate",
-				"Offset", offset,
 				"Limit", limit,
 				"State", "Query done",
 			)
 			if err != nil {
 				logger.Sugar().Errorw(
 					"Migrate",
-					"Offset", offset,
 					"Limit", limit,
 					"Error", err,
 				)
@@ -185,7 +180,6 @@ func Migrate(ctx context.Context) error {
 			if len(currencies) == 0 {
 				logger.Sugar().Errorw(
 					"Migrate",
-					"Offset", offset,
 					"Limit", limit,
 					"State", "Done",
 				)
@@ -233,24 +227,18 @@ func Migrate(ctx context.Context) error {
 					return err
 				}
 			}
-
-			offset += limit
 		}
-
-		offset = 0
 
 		for {
 			currencies, err := tx.
 				FiatCurrency.
 				Query().
 				Order(ent.Desc(entcurrency.FieldCreatedAt)).
-				Offset(offset).
 				Limit(limit).
 				All(_ctx)
 			if err != nil {
 				logger.Sugar().Errorw(
 					"Migrate",
-					"Offset", offset,
 					"Limit", limit,
 					"Error", err,
 				)
@@ -270,8 +258,6 @@ func Migrate(ctx context.Context) error {
 					return err
 				}
 			}
-
-			offset += limit
 		}
 
 		return nil
