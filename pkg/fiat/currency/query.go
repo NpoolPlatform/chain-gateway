@@ -19,7 +19,7 @@ func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, 
 }
 
 func (h *Handler) GetCurrency(ctx context.Context) (*currencymwpb.Currency, error) {
-	if h.FiatName != nil {
+	if h.FiatName == nil {
 		return nil, fmt.Errorf("invalid fiatname")
 	}
 	conds := &currencymwpb.Conds{
