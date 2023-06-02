@@ -122,4 +122,3 @@ replace ariga.io/atlas => ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e
 
 replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190204201341-e444a5086c43
 
-replace github.com/NpoolPlatform/go-service-framework v0.0.0-20230509081417-267df92cab6d => ../go-service-framework
