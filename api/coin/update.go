@@ -27,6 +27,7 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		coin1.WithWithdrawFeeAmount(in.WithdrawFeeAmount),
 		coin1.WithCollectFeeAmount(in.CollectFeeAmount),
 		coin1.WithHotWalletFeeAmount(in.HotWalletFeeAmount),
+		coin1.WithHotWalletAccountAmount(in.HotWalletAccountAmount),
 		coin1.WithLowFeeAmount(in.LowFeeAmount),
 		coin1.WithHotLowFeeAmount(in.HotLowFeeAmount),
 		coin1.WithPaymentAccountCollectAmount(in.PaymentAccountCollectAmount),
