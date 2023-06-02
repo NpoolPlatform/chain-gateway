@@ -38,8 +38,8 @@ func Migrate(ctx context.Context) error {
 		_ = redis2.Unlock(lockKey())
 	}()
 
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		coins, err := tx.
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		coins, err := cli.
 			CoinBase.
 			Query().
 			All(_ctx)
@@ -101,7 +101,7 @@ func Migrate(ctx context.Context) error {
 					continue
 				}
 
-				info, err := tx.
+				info, err := cli.
 					CurrencyFeed.
 					Query().
 					Where(
@@ -124,7 +124,7 @@ func Migrate(ctx context.Context) error {
 					continue
 				}
 
-				if _, err := tx.
+				if _, err := cli.
 					CurrencyFeed.
 					Create().
 					SetCoinTypeID(_coin.ID).
@@ -147,7 +147,7 @@ func Migrate(ctx context.Context) error {
 				"Limit", limit,
 			)
 
-			currencies, err := tx.
+			currencies, err := cli.
 				Currency.
 				Query().
 				Where(
@@ -164,27 +164,43 @@ func Migrate(ctx context.Context) error {
 					"Limit", limit,
 					"Error", err,
 				)
+				logger.Sugar().Errorw(
+					"Migrate",
+					"Offset", offset,
+					"Limit", limit,
+					"State", "Done",
+				)
 				return err
 			}
 			if len(currencies) == 0 {
 				break
 			}
 
+			_currencies := []*ent.CurrencyHistoryCreate{}
 			for _, currency := range currencies {
-				_, err := tx.
-					CurrencyHistory.
-					Create().
-					SetCoinTypeID(currency.CoinTypeID).
-					SetFeedType(currency.FeedType).
-					SetMarketValueHigh(currency.MarketValueHigh).
-					SetMarketValueLow(currency.MarketValueLow).
-					SetCreatedAt(currency.CreatedAt).
-					SetUpdatedAt(currency.UpdatedAt).
-					Save(_ctx)
-				if err != nil {
-					return err
-				}
+				_currencies = append(
+					_currencies,
+					cli.
+						CurrencyHistory.
+						Create().
+						SetCoinTypeID(currency.CoinTypeID).
+						SetFeedType(currency.FeedType).
+						SetMarketValueHigh(currency.MarketValueHigh).
+						SetMarketValueLow(currency.MarketValueLow).
+						SetCreatedAt(currency.CreatedAt).
+						SetUpdatedAt(currency.UpdatedAt),
+				)
+			}
 
+			err = cli.
+				CurrencyHistory.
+				CreateBulk(_currencies...).
+				Exec(_ctx)
+			if err != nil {
+				return err
+			}
+
+			for _, currency := range currencies {
 				keptKey := fmt.Sprintf("%v:%v", currency.CoinTypeID, currency.FeedType)
 				_, ok := kept[keptKey]
 				if !ok {
@@ -192,7 +208,7 @@ func Migrate(ctx context.Context) error {
 					continue
 				}
 
-				_, err = tx.
+				_, err = cli.
 					Currency.
 					UpdateOneID(currency.ID).
 					SetDeletedAt(uint32(time.Now().Unix())).
@@ -208,7 +224,7 @@ func Migrate(ctx context.Context) error {
 		offset = 0
 
 		for {
-			currencies, err := tx.
+			currencies, err := cli.
 				FiatCurrency.
 				Query().
 				Order(ent.Desc(entcurrency.FieldCreatedAt)).
@@ -229,7 +245,7 @@ func Migrate(ctx context.Context) error {
 			}
 
 			for _, currency := range currencies {
-				_, err := tx.
+				_, err := cli.
 					FiatCurrency.
 					UpdateOneID(currency.ID).
 					SetDeletedAt(uint32(time.Now().Unix())).
