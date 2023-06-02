@@ -221,7 +221,7 @@ func Migrate(ctx context.Context) error {
 
 			for _, currency := range currencies {
 				_, err := tx.
-					Currency.
+					FiatCurrency.
 					UpdateOneID(currency.ID).
 					SetDeletedAt(uint32(time.Now().Unix())).
 					Save(_ctx)
