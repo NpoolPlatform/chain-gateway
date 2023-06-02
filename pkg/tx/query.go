@@ -60,7 +60,7 @@ func (h *queryHandler) formalizeApps(ctx context.Context, txs []*npool.Tx) ([]*n
 
 func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Tx, error) {
 	infos := []*npool.Tx{}
-	for _, info := range infos {
+	for _, info := range h.infos {
 		infos = append(infos, &npool.Tx{
 			ID:            info.ID,
 			CoinTypeID:    info.CoinTypeID,
@@ -96,6 +96,9 @@ func (h *Handler) GetTxs(ctx context.Context) ([]*npool.Tx, uint32, error) {
 	infos, total, err := txmwcli.GetTxs(ctx, &txmwpb.Conds{}, h.Offset, h.Limit)
 	if err != nil {
 		return nil, 0, err
+	}
+	if len(infos) == 0 {
+		return nil, 0, nil
 	}
 
 	handler := &queryHandler{
