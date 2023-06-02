@@ -141,12 +141,21 @@ func Migrate(ctx context.Context) error {
 		kept := map[string]bool{}
 
 		for {
+			logger.Sugar().Errorw(
+				"Migrate",
+				"Offset", offset,
+				"Limit", limit,
+			)
+
 			currencies, err := tx.
 				Currency.
 				Query().
-				Order(ent.Desc(entcurrency.FieldCreatedAt)).
-				Offset(offset).
+				Where(
+					entcurrency.DeletedAt(0),
+				).
 				Limit(limit).
+				Offset(offset).
+				Order(ent.Desc(entcurrency.FieldCreatedAt)).
 				All(_ctx)
 			if err != nil {
 				logger.Sugar().Errorw(
@@ -235,4 +244,12 @@ func Migrate(ctx context.Context) error {
 
 		return nil
 	})
+}
+
+func Abort() {
+	logger.Sugar().Errorw(
+		"Migrate",
+		"State", "Aborted",
+	)
+	_ = redis2.Unlock(lockKey())
 }
