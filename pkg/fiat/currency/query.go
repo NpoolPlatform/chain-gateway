@@ -2,6 +2,7 @@ package currency
 
 import (
 	"context"
+	"fmt"
 
 	currencymwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/fiat/currency"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -15,4 +16,14 @@ func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, 
 		conds.FiatIDs = &basetypes.StringSliceVal{Op: cruder.IN, Value: h.FiatIDs}
 	}
 	return currencymwcli.GetCurrencies(ctx, conds, h.Offset, h.Limit)
+}
+
+func (h *Handler) GetCurrency(ctx context.Context) (*currencymwpb.Currency, error) {
+	if h.FiatName != nil {
+		return nil, fmt.Errorf("invalid fiatname")
+	}
+	conds := &currencymwpb.Conds{
+		FiatName: &basetypes.StringVal{Op: cruder.IN, Value: *h.FiatName},
+	}
+	return currencymwcli.GetCurrencyOnly(ctx, conds)
 }

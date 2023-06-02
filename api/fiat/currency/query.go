@@ -12,6 +12,35 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func (s *Server) GetCurrency(ctx context.Context, in *npool.GetCurrencyRequest) (*npool.GetCurrencyResponse, error) {
+	handler, err := currency1.NewHandler(
+		ctx,
+		currency1.WithFiatName(&in.FiatName),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCurrency",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.GetCurrencyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := handler.GetCurrency(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCurrency",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.GetCurrencyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetCurrencyResponse{
+		Info: info,
+	}, nil
+}
+
 func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesRequest) (*npool.GetCurrenciesResponse, error) {
 	handler, err := currency1.NewHandler(
 		ctx,

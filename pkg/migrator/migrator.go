@@ -4,9 +4,11 @@ package migrator
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/chain-middleware/pkg/db"
 	"github.com/NpoolPlatform/chain-middleware/pkg/db/ent"
+	entcurrency "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currency"
 	entcurrencyfeed "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currencyfeed"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
@@ -23,7 +25,7 @@ func lockKey() string {
 	return fmt.Sprintf("migrator:%v:%v", servicename.ServiceDomain, serviceID)
 }
 
-//nolint:funlen
+//nolint:funlen,gocyclo
 func Migrate(ctx context.Context) error {
 	if err := db.Init(); err != nil {
 		return err
@@ -132,6 +134,103 @@ func Migrate(ctx context.Context) error {
 					return err
 				}
 			}
+		}
+
+		offset := 0
+		limit := 1000
+		kept := map[string]bool{}
+
+		for {
+			currencies, err := tx.
+				Currency.
+				Query().
+				Order(ent.Desc(entcurrency.FieldCreatedAt)).
+				Offset(offset).
+				Limit(limit).
+				All(_ctx)
+			if err != nil {
+				logger.Sugar().Errorw(
+					"Migrate",
+					"Offset", offset,
+					"Limit", limit,
+					"Error", err,
+				)
+				return err
+			}
+			if len(currencies) == 0 {
+				break
+			}
+
+			for _, currency := range currencies {
+				_, err := tx.
+					CurrencyHistory.
+					Create().
+					SetCoinTypeID(currency.CoinTypeID).
+					SetFeedType(currency.FeedType).
+					SetMarketValueHigh(currency.MarketValueHigh).
+					SetMarketValueLow(currency.MarketValueLow).
+					SetCreatedAt(currency.CreatedAt).
+					SetUpdatedAt(currency.UpdatedAt).
+					Save(_ctx)
+				if err != nil {
+					return err
+				}
+
+				keptKey := fmt.Sprintf("%v:%v", currency.CoinTypeID, currency.FeedType)
+				_, ok := kept[keptKey]
+				if !ok {
+					kept[keptKey] = true
+					continue
+				}
+
+				_, err = tx.
+					Currency.
+					UpdateOneID(currency.ID).
+					SetDeletedAt(uint32(time.Now().Unix())).
+					Save(_ctx)
+				if err != nil {
+					return err
+				}
+			}
+
+			offset += limit
+		}
+
+		offset = 0
+
+		for {
+			currencies, err := tx.
+				FiatCurrency.
+				Query().
+				Order(ent.Desc(entcurrency.FieldCreatedAt)).
+				Offset(offset).
+				Limit(limit).
+				All(_ctx)
+			if err != nil {
+				logger.Sugar().Errorw(
+					"Migrate",
+					"Offset", offset,
+					"Limit", limit,
+					"Error", err,
+				)
+				return err
+			}
+			if len(currencies) == 0 {
+				break
+			}
+
+			for _, currency := range currencies {
+				_, err := tx.
+					Currency.
+					UpdateOneID(currency.ID).
+					SetDeletedAt(uint32(time.Now().Unix())).
+					Save(_ctx)
+				if err != nil {
+					return err
+				}
+			}
+
+			offset += limit
 		}
 
 		return nil

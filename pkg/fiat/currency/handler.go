@@ -2,6 +2,7 @@ package currency
 
 import (
 	"context"
+	"fmt"
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/const"
 
@@ -9,9 +10,10 @@ import (
 )
 
 type Handler struct {
-	FiatIDs []string
-	Offset  int32
-	Limit   int32
+	FiatName *string
+	FiatIDs  []string
+	Offset   int32
+	Limit    int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -22,6 +24,19 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 		}
 	}
 	return handler, nil
+}
+
+func WithFiatName(name *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if name == nil {
+			return nil
+		}
+		if *name == "" {
+			return fmt.Errorf("invalid fiatname")
+		}
+		h.FiatName = name
+		return nil
+	}
 }
 
 func WithFiatIDs(ids []string) func(context.Context, *Handler) error {
