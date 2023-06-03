@@ -117,7 +117,7 @@ func Migrate(ctx context.Context) error {
 					Query().
 					Where(
 						entcurrencyfeed.CoinTypeID(_coin.ID),
-						entcurrencyfeed.FeedType(_feedType),
+						entcurrencyfeed.FeedType(_feedType.String()),
 						entcurrencyfeed.DeletedAt(0),
 					).
 					Only(_ctx)
