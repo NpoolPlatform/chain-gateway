@@ -23,7 +23,7 @@ func (h *Handler) GetCurrency(ctx context.Context) (*currencymwpb.Currency, erro
 		return nil, fmt.Errorf("invalid fiatname")
 	}
 	conds := &currencymwpb.Conds{
-		FiatName: &basetypes.StringVal{Op: cruder.IN, Value: *h.FiatName},
+		FiatName: &basetypes.StringVal{Op: cruder.EQ, Value: *h.FiatName},
 	}
 	return currencymwcli.GetCurrencyOnly(ctx, conds)
 }
