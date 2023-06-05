@@ -15,6 +15,9 @@ func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, 
 	if len(h.CoinTypeIDs) > 0 {
 		conds.CoinTypeIDs = &basetypes.StringSliceVal{Op: cruder.IN, Value: h.CoinTypeIDs}
 	}
+	if len(h.CoinNames) > 0 {
+		conds.CoinNames = &basetypes.StringSliceVal{Op: cruder.IN, Value: h.CoinNames}
+	}
 	if h.StartAt != nil {
 		conds.StartAt = &basetypes.Uint32Val{Op: cruder.GTE, Value: *h.StartAt}
 	}

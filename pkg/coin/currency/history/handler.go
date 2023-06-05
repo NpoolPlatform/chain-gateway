@@ -9,6 +9,7 @@ import (
 )
 
 type Handler struct {
+	CoinNames   []string
 	CoinTypeIDs []string
 	StartAt     *uint32
 	EndAt       *uint32
@@ -37,6 +38,13 @@ func WithCoinTypeIDs(ids []string) func(context.Context, *Handler) error {
 			}
 		}
 		h.CoinTypeIDs = ids
+		return nil
+	}
+}
+
+func WithCoinNames(names []string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.CoinNames = names
 		return nil
 	}
 }
