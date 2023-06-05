@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230526062616-0124082ee3b5
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20230518061816-62bd589c0f63
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20230605114855-789af05afbc3
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20230605123408-7e083d1f9b54
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230602083207-1c0e6203556b
 	github.com/NpoolPlatform/good-middleware v0.0.0-20230331110615-5a0a0621e322
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
