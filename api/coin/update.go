@@ -4,66 +4,55 @@ package coin
 import (
 	"context"
 
-	commontracer "github.com/NpoolPlatform/chain-gateway/pkg/tracer"
+	coin1 "github.com/NpoolPlatform/chain-gateway/pkg/coin"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin"
 
-	constant "github.com/NpoolPlatform/chain-gateway/pkg/message/const"
-
-	coinmw "github.com/NpoolPlatform/chain-middleware/api/coin"
-	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
-
-	"go.opentelemetry.io/otel"
-	scodes "go.opentelemetry.io/otel/codes"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/coin"
-	coinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin"
 )
 
 func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*npool.UpdateCoinResponse, error) {
-	var err error
-
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "UpdateCoin")
-	defer span.End()
-
-	defer func() {
-		if err != nil {
-			span.SetStatus(scodes.Error, err.Error())
-			span.RecordError(err)
-		}
-	}()
-
-	req := &coinmwpb.CoinReq{
-		ID:                          &in.ID,
-		Presale:                     in.Presale,
-		ReservedAmount:              in.ReservedAmount,
-		ForPay:                      in.ForPay,
-		HomePage:                    in.HomePage,
-		Specs:                       in.Specs,
-		FeeCoinTypeID:               in.FeeCoinTypeID,
-		WithdrawFeeByStableUSD:      in.WithdrawFeeByStableUSD,
-		WithdrawFeeAmount:           in.WithdrawFeeAmount,
-		CollectFeeAmount:            in.CollectFeeAmount,
-		HotWalletFeeAmount:          in.HotWalletFeeAmount,
-		LowFeeAmount:                in.LowFeeAmount,
-		HotLowFeeAmount:             in.HotLowFeeAmount,
-		HotWalletAccountAmount:      in.HotWalletAccountAmount,
-		PaymentAccountCollectAmount: in.PaymentAccountCollectAmount,
-		Disabled:                    in.Disabled,
-		StableUSD:                   in.StableUSD,
-		LeastTransferAmount:         in.LeastTransferAmount,
-		NeedMemo:                    in.NeedMemo,
-	}
-
-	if err := coinmw.ValidateUpdate(ctx, req); err != nil {
+	handler, err := coin1.NewHandler(
+		ctx,
+		coin1.WithID(&in.ID),
+		coin1.WithLogo(in.Logo),
+		coin1.WithPresale(in.Presale),
+		coin1.WithReservedAmount(in.ReservedAmount),
+		coin1.WithForPay(in.ForPay),
+		coin1.WithHomePage(in.HomePage),
+		coin1.WithSpecs(in.Specs),
+		coin1.WithFeeCoinTypeID(in.FeeCoinTypeID),
+		coin1.WithWithdrawFeeByStableUSD(in.WithdrawFeeByStableUSD),
+		coin1.WithWithdrawFeeAmount(in.WithdrawFeeAmount),
+		coin1.WithCollectFeeAmount(in.CollectFeeAmount),
+		coin1.WithHotWalletFeeAmount(in.HotWalletFeeAmount),
+		coin1.WithHotWalletAccountAmount(in.HotWalletAccountAmount),
+		coin1.WithLowFeeAmount(in.LowFeeAmount),
+		coin1.WithHotLowFeeAmount(in.HotLowFeeAmount),
+		coin1.WithPaymentAccountCollectAmount(in.PaymentAccountCollectAmount),
+		coin1.WithDisabled(in.Disabled),
+		coin1.WithStableUSD(in.StableUSD),
+		coin1.WithLeastTransferAmount(in.LeastTransferAmount),
+		coin1.WithNeedMemo(in.NeedMemo),
+		coin1.WithRefreshCurrency(in.RefreshCurrency),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"UpdateCoin",
+			"In", in,
+			"Error", err,
+		)
 		return &npool.UpdateCoinResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	span = commontracer.TraceID(span, in.GetID())
-	span = commontracer.TraceInvoker(span, "coin", "coin", "Update")
-
-	info, err := coinmwcli.UpdateCoin(ctx, req)
+	info, err := handler.UpdateCoin(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"UpdateCoin",
+			"In", in,
+			"Error", err,
+		)
 		return &npool.UpdateCoinResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
