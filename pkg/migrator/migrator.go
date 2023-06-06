@@ -10,7 +10,6 @@ import (
 	"github.com/NpoolPlatform/chain-middleware/pkg/db/ent"
 	entcurrency "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currency"
 	entcurrencyfeed "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currencyfeed"
-	entcurrencyhis "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currencyhistory"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -180,118 +179,51 @@ func Migrate(ctx context.Context) (err error) {
 		return err
 	}
 
-	limit := 1000
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		kept := map[string]uuid.UUID{}
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		_, err := cli.
+			Currency.
+			Update().
+			SetDeletedAt(uint32(time.Now().Unix())).
+			Save(_ctx)
+		if err != nil {
+			return err
+		}
 
-		for {
-			logger.Sugar().Errorw(
-				"Migrate",
-				"Limit", limit,
-				"State", "Query start",
-			)
+		ids, err := cli.
+			Currency.
+			Query().
+			GroupBy(entcurrency.FieldCoinTypeID).
+			Strings(_ctx)
+		if err != nil {
+			return err
+		}
 
-			currencies, err := tx.
+		for _, id := range ids {
+			info, err := cli.
 				Currency.
 				Query().
 				Where(
-					entcurrency.DeletedAt(0),
+					entcurrency.CoinTypeID(uuid.MustParse(id)),
 				).
-				Limit(limit).
-				Order(ent.Desc(entcurrency.FieldUpdatedAt)).
-				All(_ctx)
-			logger.Sugar().Errorw(
-				"Migrate",
-				"Limit", limit,
-				"State", "Query done",
-			)
-			if err != nil {
-				logger.Sugar().Errorw(
-					"Migrate",
-					"Limit", limit,
-					"Error", err,
-				)
-				return err
-			}
-
-			updatable := false
-			for _, currency := range currencies {
-				keptKey := fmt.Sprintf("%v:%v", currency.CoinTypeID, currency.FeedType)
-				_kept, ok := kept[keptKey]
-				if !ok || _kept != currency.ID {
-					updatable = true
-					break
-				}
-			}
-
-			if !updatable {
-				logger.Sugar().Errorw(
-					"Migrate",
-					"Limit", limit,
-					"State", "Done",
-				)
-				break
-			}
-
-			_currencies := []*ent.CurrencyHistoryCreate{}
-			for _, currency := range currencies {
-				exist, err := tx.
-					CurrencyHistory.
-					Query().
-					Where(
-						entcurrencyhis.ID(currency.ID),
-					).
-					Exist(_ctx)
-				if err != nil {
-					return err
-				}
-				if exist {
-					continue
-				}
-
-				_currencies = append(
-					_currencies,
-					tx.CurrencyHistory.
-						Create().
-						SetID(currency.ID).
-						SetCoinTypeID(currency.CoinTypeID).
-						SetFeedType(currency.FeedType).
-						SetMarketValueHigh(currency.MarketValueHigh).
-						SetMarketValueLow(currency.MarketValueLow).
-						SetCreatedAt(currency.CreatedAt).
-						SetUpdatedAt(currency.UpdatedAt),
-				)
-			}
-
-			err = tx.
-				CurrencyHistory.
-				CreateBulk(_currencies...).
-				Exec(_ctx)
+				Order(
+					ent.Desc(entcurrency.FieldUpdatedAt),
+				).
+				Limit(1).
+				Only(_ctx)
 			if err != nil {
 				return err
 			}
 
-			for _, currency := range currencies {
-				keptKey := fmt.Sprintf("%v:%v", currency.CoinTypeID, currency.FeedType)
-				_kept, ok := kept[keptKey]
-				if !ok {
-					kept[keptKey] = currency.ID
-					continue
-				}
-				if _kept == currency.ID {
-					continue
-				}
-
-				_, err = tx.
-					Currency.
-					UpdateOneID(currency.ID).
-					SetDeletedAt(uint32(time.Now().Unix())).
-					Save(_ctx)
-				if err != nil {
-					return err
-				}
+			_, err = cli.
+				Currency.
+				UpdateOneID(info.ID).
+				SetDeletedAt(0).
+				Save(_ctx)
+			if err != nil {
+				return err
 			}
 		}
+
 		return nil
 	})
 	if err != nil {
