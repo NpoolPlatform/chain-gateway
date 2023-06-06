@@ -258,37 +258,14 @@ func Migrate(ctx context.Context) error {
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for {
-			currencies, err := tx.
-				FiatCurrency.
-				Query().
-				Order(ent.Desc(entcurrency.FieldCreatedAt)).
-				Limit(limit).
-				All(_ctx)
-			if err != nil {
-				logger.Sugar().Errorw(
-					"Migrate",
-					"Limit", limit,
-					"Error", err,
-				)
-				return err
-			}
-			if len(currencies) == 0 {
-				break
-			}
-
-			for _, currency := range currencies {
-				_, err := tx.
-					FiatCurrency.
-					UpdateOneID(currency.ID).
-					SetDeletedAt(uint32(time.Now().Unix())).
-					Save(_ctx)
-				if err != nil {
-					return err
-				}
-			}
+		_, err := tx.
+			FiatCurrency.
+			Update().
+			SetDeletedAt(uint32(time.Now().Unix())).
+			Save(_ctx)
+		if err != nil {
+			return err
 		}
-
 		return nil
 	})
 }
