@@ -62,6 +62,21 @@ func Migrate(ctx context.Context) (err error) {
 	}()
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		_, err := tx.
+			ExecContext(
+				ctx,
+				"SET global sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))",
+			)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		coins, err := tx.
 			CoinBase.
 			Query().
