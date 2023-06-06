@@ -28,28 +28,30 @@ func lockKey() string {
 }
 
 //nolint:funlen,gocyclo
-func Migrate(ctx context.Context) error {
+func Migrate(ctx context.Context) (err error) {
 	logger.Sugar().Infow(
 		"Migrate",
 		"State", "Start...",
+		"LockKey", lockKey(),
 	)
 	defer logger.Sugar().Infow(
 		"Migrate",
 		"State", "Done...",
+		"Error", err,
 	)
 
-	if err := db.Init(); err != nil {
+	if err = db.Init(); err != nil {
 		return err
 	}
 
-	if err := redis2.TryLock(lockKey(), 0); err != nil {
+	if err = redis2.TryLock(lockKey(), 0); err != nil {
 		return err
 	}
 	defer func() {
 		_ = redis2.Unlock(lockKey())
 	}()
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		coins, err := tx.
 			CoinBase.
 			Query().
