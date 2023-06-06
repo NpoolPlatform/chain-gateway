@@ -40,11 +40,11 @@ func Migrate(ctx context.Context) (err error) {
 		"Error", err,
 	)
 
-	if err = db.Init(); err != nil {
+	if err = db.Init(); err != nil { //nolint
 		return err
 	}
 
-	if err = redis2.TryLock(lockKey(), 0); err != nil {
+	if err = redis2.TryLock(lockKey(), 0); err != nil { //nolint
 		return err
 	}
 	defer func() {
