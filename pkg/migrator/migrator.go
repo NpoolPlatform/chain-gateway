@@ -271,11 +271,3 @@ func Migrate(ctx context.Context) (err error) {
 		return nil
 	})
 }
-
-func Abort() {
-	logger.Sugar().Errorw(
-		"Migrate",
-		"State", "Aborted",
-	)
-	_ = redis2.Unlock(lockKey())
-}

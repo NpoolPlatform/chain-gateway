@@ -28,7 +28,6 @@ var runCmd = &cli.Command{
 			rpcGatewayRegister,
 			watch,
 		)
-		migrator.Abort()
 		return err
 	},
 }
