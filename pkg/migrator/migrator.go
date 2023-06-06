@@ -49,7 +49,7 @@ func Migrate(ctx context.Context) error {
 		_ = redis2.Unlock(lockKey())
 	}()
 
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		coins, err := tx.
 			CoinBase.
 			Query().
@@ -147,8 +147,14 @@ func Migrate(ctx context.Context) error {
 				}
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
 
-		limit := 1000
+	limit := 1000
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		kept := map[string]uuid.UUID{}
 
 		for {
@@ -245,7 +251,13 @@ func Migrate(ctx context.Context) error {
 				}
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
 
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for {
 			currencies, err := tx.
 				FiatCurrency.
