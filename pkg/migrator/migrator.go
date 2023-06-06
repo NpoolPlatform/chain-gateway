@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/chain-middleware/pkg/db/ent"
 	entcurrency "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currency"
 	entcurrencyfeed "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currencyfeed"
+	entcurrencyhis "github.com/NpoolPlatform/chain-middleware/pkg/db/ent/currencyhistory"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -44,8 +45,17 @@ func Migrate(ctx context.Context) (err error) {
 		return err
 	}
 
-	if err = redis2.TryLock(lockKey(), 0); err != nil { //nolint
-		return nil
+	for {
+		if err = redis2.TryLock(lockKey(), 0); err != nil { //nolint
+			defer logger.Sugar().Infow(
+				"Migrate",
+				"State", "Waiting...",
+				"Error", err,
+			)
+			time.Sleep(time.Minute)
+			continue
+		}
+		break
 	}
 	defer func() {
 		_ = redis2.Unlock(lockKey())
@@ -210,11 +220,25 @@ func Migrate(ctx context.Context) (err error) {
 
 			_currencies := []*ent.CurrencyHistoryCreate{}
 			for _, currency := range currencies {
+				exist, err := tx.
+					CurrencyHistory.
+					Query().
+					Where(
+						entcurrencyhis.ID(currency.ID),
+					).
+					Exist(_ctx)
+				if err != nil {
+					return err
+				}
+				if exist {
+					continue
+				}
+
 				_currencies = append(
 					_currencies,
-					tx.
-						CurrencyHistory.
+					tx.CurrencyHistory.
 						Create().
+						SetID(currency.ID).
 						SetCoinTypeID(currency.CoinTypeID).
 						SetFeedType(currency.FeedType).
 						SetMarketValueHigh(currency.MarketValueHigh).
