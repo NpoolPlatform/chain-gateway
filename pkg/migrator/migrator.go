@@ -45,7 +45,7 @@ func Migrate(ctx context.Context) (err error) {
 	}
 
 	if err = redis2.TryLock(lockKey(), 0); err != nil { //nolint
-		return err
+		return nil
 	}
 	defer func() {
 		_ = redis2.Unlock(lockKey())
