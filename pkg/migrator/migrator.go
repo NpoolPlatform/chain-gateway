@@ -47,7 +47,7 @@ func Migrate(ctx context.Context) (err error) {
 
 	for {
 		if err = redis2.TryLock(lockKey(), 0); err != nil { //nolint
-			defer logger.Sugar().Infow(
+			logger.Sugar().Infow(
 				"Migrate",
 				"State", "Waiting...",
 				"Error", err,
