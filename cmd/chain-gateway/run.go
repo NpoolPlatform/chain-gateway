@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/chain-gateway/api"
-	"github.com/NpoolPlatform/chain-gateway/pkg/migrator"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 	"github.com/NpoolPlatform/go-service-framework/pkg/action"
@@ -33,9 +32,6 @@ var runCmd = &cli.Command{
 }
 
 func run(ctx context.Context) error {
-	if err := migrator.Migrate(ctx); err != nil {
-		return err
-	}
 	return nil
 }
 
