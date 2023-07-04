@@ -30,5 +30,6 @@ func (h *Handler) UpdateCoin(ctx context.Context) (*coinmwpb.Coin, error) {
 		LeastTransferAmount:         h.LeastTransferAmount,
 		NeedMemo:                    h.NeedMemo,
 		RefreshCurrency:             h.RefreshCurrency,
+		CheckNewAddressBalance:      h.CheckNewAddressBalance,
 	})
 }

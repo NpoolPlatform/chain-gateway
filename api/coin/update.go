@@ -36,6 +36,7 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		coin1.WithLeastTransferAmount(in.LeastTransferAmount),
 		coin1.WithNeedMemo(in.NeedMemo),
 		coin1.WithRefreshCurrency(in.RefreshCurrency),
+		coin1.WithCheckNewAddressBalance(in.CheckNewAddressBalance),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
