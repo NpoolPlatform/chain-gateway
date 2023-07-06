@@ -36,6 +36,7 @@ type Handler struct {
 	LeastTransferAmount         *string
 	NeedMemo                    *bool
 	RefreshCurrency             *bool
+	CheckNewAddressBalance      *bool
 	Offset                      int32
 	Limit                       int32
 }
@@ -316,6 +317,13 @@ func WithNeedMemo(needMemo *bool) func(context.Context, *Handler) error {
 func WithRefreshCurrency(refresh *bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.RefreshCurrency = refresh
+		return nil
+	}
+}
+
+func WithCheckNewAddressBalance(check *bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.CheckNewAddressBalance = check
 		return nil
 	}
 }
