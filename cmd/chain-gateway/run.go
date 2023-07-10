@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/chain-gateway/api"
+	"github.com/NpoolPlatform/chain-gateway/pkg/migrator"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 	"github.com/NpoolPlatform/go-service-framework/pkg/action"
@@ -20,6 +21,9 @@ var runCmd = &cli.Command{
 	Aliases: []string{"s"},
 	Usage:   "Run the daemon",
 	Action: func(c *cli.Context) error {
+		if err := migrator.Migrate(c.Context); err != nil {
+			return err
+		}
 		err := action.Run(
 			c.Context,
 			run,
