@@ -36,7 +36,7 @@ require (
 require (
 	ariga.io/atlas v0.7.2-0.20220927111110-867ee0cca56a // indirect
 	entgo.io/ent v0.11.3 // indirect
-	github.com/NpoolPlatform/account-middleware v0.0.0-20230706064131-e6ef2eadae95
+	github.com/NpoolPlatform/account-middleware v0.0.0-20230712122024-60dc0bb4c0c0
 	github.com/Shonminh/apollo-client v0.4.0 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
