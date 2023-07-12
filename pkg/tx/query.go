@@ -3,12 +3,13 @@ package tx
 import (
 	"context"
 
+	accmwcli "github.com/NpoolPlatform/account-middleware/pkg/client/account"
 	txmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/tx"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	accmwpb "github.com/NpoolPlatform/message/npool/account/mw/v1/account"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/tx"
 	txmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/tx"
-
-	accmwcli "github.com/NpoolPlatform/account-middleware/pkg/client/account"
-	accmgrpb "github.com/NpoolPlatform/message/npool/account/mgr/v1/account"
 )
 
 type queryHandler struct {
@@ -23,12 +24,14 @@ func (h *queryHandler) formalizeAccounts(ctx context.Context, txs []*npool.Tx) (
 		ids = append(ids, info.FromAccountID, info.ToAccountID)
 	}
 
-	accs, _, err := accmwcli.GetManyAccounts(ctx, ids)
+	accs, _, err := accmwcli.GetAccounts(ctx, &accmwpb.Conds{
+		IDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: ids},
+	}, 0, int32(len(ids)))
 	if err != nil {
 		return nil, err
 	}
 
-	accMap := map[string]*accmgrpb.Account{}
+	accMap := map[string]*accmwpb.Account{}
 	for _, acc := range accs {
 		accMap[acc.ID] = acc
 	}
