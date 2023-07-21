@@ -9,6 +9,7 @@ metadata:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
+      kube-system-oplog@kubernetescrd,
       kube-system-strip-chain-gateway-prefix@kubernetescrd,
       kube-system-http-redirect-https@kubernetescrd,
       kube-system-common-headers@kubernetescrd,
@@ -82,6 +83,10 @@ spec:
       http: *http_rules
     - host: api.japan-procyon-production.npool.top
       http: *http_rules
+    - host: api.hk-cryptomore-production.npool.top
+      http: *http_rules
+    - host: api.cryptomore.io
+      http: *http_rules
 
 ---
 
@@ -96,6 +101,7 @@ metadata:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
+      kube-system-oplog@kubernetescrd,
       kube-system-strip-chain-gateway-prefix@kubernetescrd,
       kube-system-http-redirect-https@kubernetescrd,
       kube-system-common-headers@kubernetescrd,
@@ -232,4 +238,8 @@ spec:
     - host: api.jh-testing.npool.top
       http: *http_rules
     - host: api.japan-procyon-production.npool.top
+      http: *http_rules
+    - host: api.hk-cryptomore-production.npool.top
+      http: *http_rules
+    - host: api.cryptomore.io
       http: *http_rules
