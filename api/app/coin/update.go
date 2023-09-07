@@ -24,7 +24,6 @@ func (s *Server) UpdateCoin(ctx context.Context, in *npool.UpdateCoinRequest) (*
 		appcoin1.WithMarketValue(in.MarketValue),
 		appcoin1.WithSettlePercent(in.SettlePercent),
 		appcoin1.WithSettleTips(in.SettleTips),
-		appcoin1.WithDailyRewardAmount(in.DailyRewardAmount),
 		appcoin1.WithProductPage(in.ProductPage),
 		appcoin1.WithDisabled(in.Disabled),
 		appcoin1.WithDisplay(in.Display),

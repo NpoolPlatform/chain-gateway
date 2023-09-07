@@ -5,13 +5,12 @@ import (
 	"fmt"
 
 	appcoinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/app/coin"
-	"github.com/NpoolPlatform/good-middleware/pkg/client/appdefaultgood"
+	appdefaultgoodmwcli "github.com/NpoolPlatform/good-middleware/pkg/client/app/good/default"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/chain/gw/v1/app/coin"
 	appcoinmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/app/coin"
-	appgoodmgrpb "github.com/NpoolPlatform/message/npool/good/mgr/v1/appdefaultgood"
+	appdefaultgoodmwpb "github.com/NpoolPlatform/message/npool/good/mw/v1/app/good/default"
 )
 
 type queryHandler struct {
@@ -26,19 +25,18 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 		ids = append(ids, info.CoinTypeID)
 	}
 
-	conds := &appgoodmgrpb.Conds{
-		CoinTypeIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: ids},
+	conds := &appdefaultgoodmwpb.Conds{
+		CoinTypeIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: ids},
 	}
 	if h.AppID != nil {
-		conds.AppID = &commonpb.StringVal{Op: cruder.EQ, Value: *h.AppID}
+		conds.AppID = &basetypes.StringVal{Op: cruder.EQ, Value: *h.AppID}
 	}
-
-	infos, _, err := appdefaultgood.GetAppDefaultGoods(ctx, conds, 0, int32(len(ids)))
+	infos, _, err := appdefaultgoodmwcli.GetDefaults(ctx, conds, 0, int32(len(ids)))
 	if err != nil {
 		return nil, err
 	}
 
-	infoMap := map[string]*appgoodmgrpb.AppDefaultGood{}
+	infoMap := map[string]*appdefaultgoodmwpb.Default{}
 	for _, info := range infos {
 		infoMap[info.AppID+info.CoinTypeID] = info
 	}
@@ -86,7 +84,6 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 			CoinDisabled:                info.CoinDisabled,
 			CreatedAt:                   info.CreatedAt,
 			UpdatedAt:                   info.UpdatedAt,
-			DailyRewardAmount:           info.DailyRewardAmount,
 			Display:                     info.Display,
 			DisplayIndex:                info.DisplayIndex,
 			MaxAmountPerWithdraw:        info.MaxAmountPerWithdraw,
