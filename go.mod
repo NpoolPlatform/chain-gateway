@@ -3,13 +3,13 @@ module github.com/NpoolPlatform/chain-gateway
 go 1.17
 
 require (
-	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230526062616-0124082ee3b5
+	github.com/NpoolPlatform/appuser-middleware v0.0.0-20230907004549-4f1c2eebedfb
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20230518061816-62bd589c0f63
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20230712041523-2e1d215244e0
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20230814035104-e1466b5c157e
-	github.com/NpoolPlatform/good-middleware v0.0.0-20230907024004-9bbf3f8541cb
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20230906092012-a63f3a7b0b54
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20230908062053-29b3902a30f9
+	github.com/NpoolPlatform/good-middleware v0.0.0-20230908024921-d7338b7a4309
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20230825073905-d23e4d838f99
-	github.com/NpoolPlatform/message v0.0.0-20230906142354-ac8156431b42
+	github.com/NpoolPlatform/message v0.0.0-20230908051445-af13590c466e
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
