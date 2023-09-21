@@ -93,7 +93,7 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 
 		dinfo, ok := infoMap[info.AppID+info.CoinTypeID]
 		if ok {
-			_info.DefaultGoodID = &dinfo.GoodID
+			_info.DefaultGoodID = &dinfo.ID
 		}
 
 		_infos = append(_infos, _info)
