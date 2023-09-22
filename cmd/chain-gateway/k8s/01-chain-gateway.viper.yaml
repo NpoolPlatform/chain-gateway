@@ -14,4 +14,5 @@ data:
       appid: "89089012783789789719823798127398"
       serviceid: "94f9147c-60f0-11ed-b341-97315b5d37ad"
       logdir: "./"
+      log_level: "warning"
       apolloAccessKey: "0147fb70b815403790e8634b899fac07"
