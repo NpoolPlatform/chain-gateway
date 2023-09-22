@@ -12,7 +12,7 @@ import (
 	currencyhismwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/coin/currency/history"
 )
 
-func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, uint32, error) {
+func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, uint32, error) { //nolint
 	conds := &currencyhismwpb.Conds{}
 	if len(h.CoinTypeIDs) > 0 {
 		conds.CoinTypeIDs = &basetypes.StringSliceVal{Op: cruder.IN, Value: h.CoinTypeIDs}
