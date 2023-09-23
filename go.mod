@@ -16,8 +16,6 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/stretchr/testify v1.8.3
 	github.com/urfave/cli/v2 v2.17.2-0.20221006022127-8f469abc00aa
-	go.opentelemetry.io/otel v1.10.0
-	go.opentelemetry.io/otel/trace v1.10.0
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
 )
@@ -36,6 +34,8 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	go.opentelemetry.io/otel v1.10.0 // indirect
+	go.opentelemetry.io/otel/trace v1.10.0 // indirect
 	golang.org/x/tools v0.7.0 // indirect
 )
 
