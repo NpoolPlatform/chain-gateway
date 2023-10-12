@@ -10,7 +10,8 @@ import (
 )
 
 type Handler struct {
-	ID     *string
+	ID     *uint32
+	EntID  *string
 	Name   *string
 	Logo   *string
 	Unit   *string
@@ -28,23 +29,42 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
-		}
-		_, err := uuid.Parse(*id)
-		if err != nil {
-			return err
 		}
 		h.ID = id
 		return nil
 	}
 }
 
-func WithName(name *string) func(context.Context, *Handler) error {
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
+		_, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.EntID = id
+		return nil
+	}
+}
+
+func WithName(name *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if name == nil {
+			if must {
+				return fmt.Errorf("invalid fiatname")
+			}
 			return nil
 		}
 		if *name == "" {
@@ -55,16 +75,19 @@ func WithName(name *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithLogo(logo *string) func(context.Context, *Handler) error {
+func WithLogo(logo *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Logo = logo
 		return nil
 	}
 }
 
-func WithUnit(unit *string) func(context.Context, *Handler) error {
+func WithUnit(unit *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if unit == nil {
+			if must {
+				return fmt.Errorf("invalid fiatunit")
+			}
 			return nil
 		}
 		if *unit == "" {

@@ -15,9 +15,9 @@ import (
 func (s *Server) CreateFiat(ctx context.Context, in *npool.CreateFiatRequest) (*npool.CreateFiatResponse, error) {
 	handler, err := fiat1.NewHandler(
 		ctx,
-		fiat1.WithName(&in.Name),
-		fiat1.WithUnit(&in.Unit),
-		fiat1.WithLogo(&in.Logo),
+		fiat1.WithName(&in.Name, true),
+		fiat1.WithUnit(&in.Unit, true),
+		fiat1.WithLogo(&in.Logo, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

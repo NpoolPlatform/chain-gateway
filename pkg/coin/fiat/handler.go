@@ -32,16 +32,19 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *uint32) func(context.Context, *Handler) error {
+func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.ID = id
 		return nil
 	}
 }
 
-func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
+func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid cointypeid")
+			}
 			return nil
 		}
 		_coin, err := coinmwcli.GetCoin(ctx, *id)
@@ -56,7 +59,7 @@ func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCoinTypeIDs(ids []string) func(context.Context, *Handler) error {
+func WithCoinTypeIDs(ids []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		for _, id := range ids {
 			if _, err := uuid.Parse(id); err != nil {
@@ -68,9 +71,12 @@ func WithCoinTypeIDs(ids []string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFiatID(id *string) func(context.Context, *Handler) error {
+func WithFiatID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid fiatid")
+			}
 			return nil
 		}
 		_fiat, err := fiatmwcli.GetFiat(ctx, *id)
@@ -85,9 +91,12 @@ func WithFiatID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFeedType(feedType *basetypes.CurrencyFeedType) func(context.Context, *Handler) error {
+func WithFeedType(feedType *basetypes.CurrencyFeedType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if feedType == nil {
+			if must {
+				return fmt.Errorf("invalid feedtype")
+			}
 			return nil
 		}
 		switch *feedType {

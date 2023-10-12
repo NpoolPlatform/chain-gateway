@@ -26,9 +26,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithFiatName(name *string) func(context.Context, *Handler) error {
+func WithFiatName(name *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if name == nil {
+			if must {
+				return fmt.Errorf("invalid fiatname")
+			}
 			return nil
 		}
 		if *name == "" {
@@ -39,9 +42,12 @@ func WithFiatName(name *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFiatIDs(ids []string) func(context.Context, *Handler) error {
+func WithFiatIDs(ids []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if len(ids) == 0 {
+			if must {
+				return fmt.Errorf("invalid fiatids")
+			}
 			return nil
 		}
 		for _, id := range ids {

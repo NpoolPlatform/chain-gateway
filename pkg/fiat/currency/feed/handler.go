@@ -12,7 +12,8 @@ import (
 )
 
 type Handler struct {
-	ID           *string
+	ID           *uint32
+	EntID        *string
 	FiatID       *string
 	FeedType     *basetypes.CurrencyFeedType
 	FeedFiatName *string
@@ -31,23 +32,42 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
-		}
-		_, err := uuid.Parse(*id)
-		if err != nil {
-			return err
 		}
 		h.ID = id
 		return nil
 	}
 }
 
-func WithFiatID(id *string) func(context.Context, *Handler) error {
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
+		_, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.EntID = id
+		return nil
+	}
+}
+
+func WithFiatID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid fiatid")
+			}
 			return nil
 		}
 		_fiat, err := fiatmwcli.GetFiat(ctx, *id)
@@ -62,9 +82,12 @@ func WithFiatID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFeedType(feedType *basetypes.CurrencyFeedType) func(context.Context, *Handler) error {
+func WithFeedType(feedType *basetypes.CurrencyFeedType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if feedType == nil {
+			if must {
+				return fmt.Errorf("invalid fiattype")
+			}
 			return nil
 		}
 		switch *feedType {
@@ -79,14 +102,14 @@ func WithFeedType(feedType *basetypes.CurrencyFeedType) func(context.Context, *H
 	}
 }
 
-func WithFeedFiatName(name *string) func(context.Context, *Handler) error {
+func WithFeedFiatName(name *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.FeedFiatName = name
 		return nil
 	}
 }
 
-func WithDisabled(disabled *bool) func(context.Context, *Handler) error {
+func WithDisabled(disabled *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Disabled = disabled
 		return nil

@@ -15,9 +15,9 @@ import (
 func (s *Server) CreateCoinFiat(ctx context.Context, in *npool.CreateCoinFiatRequest) (*npool.CreateCoinFiatResponse, error) {
 	handler, err := fiat1.NewHandler(
 		ctx,
-		fiat1.WithCoinTypeID(&in.CoinTypeID),
-		fiat1.WithFiatID(&in.FiatID),
-		fiat1.WithFeedType(&in.FeedType),
+		fiat1.WithCoinTypeID(&in.CoinTypeID, true),
+		fiat1.WithFiatID(&in.FiatID, true),
+		fiat1.WithFeedType(&in.FeedType, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

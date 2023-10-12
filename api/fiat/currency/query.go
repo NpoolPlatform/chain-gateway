@@ -15,7 +15,7 @@ import (
 func (s *Server) GetCurrency(ctx context.Context, in *npool.GetCurrencyRequest) (*npool.GetCurrencyResponse, error) {
 	handler, err := currency1.NewHandler(
 		ctx,
-		currency1.WithFiatName(&in.FiatName),
+		currency1.WithFiatName(&in.FiatName, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -44,7 +44,7 @@ func (s *Server) GetCurrency(ctx context.Context, in *npool.GetCurrencyRequest) 
 func (s *Server) GetCurrencies(ctx context.Context, in *npool.GetCurrenciesRequest) (*npool.GetCurrenciesResponse, error) {
 	handler, err := currency1.NewHandler(
 		ctx,
-		currency1.WithFiatIDs(in.FiatIDs),
+		currency1.WithFiatIDs(in.FiatIDs, false),
 		currency1.WithOffset(in.GetOffset()),
 		currency1.WithLimit(in.GetLimit()),
 	)

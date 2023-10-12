@@ -15,9 +15,9 @@ import (
 func (s *Server) CreateCoin(ctx context.Context, in *npool.CreateCoinRequest) (*npool.CreateCoinResponse, error) {
 	handler, err := coin1.NewHandler(
 		ctx,
-		coin1.WithName(&in.Name),
-		coin1.WithUnit(&in.Unit),
-		coin1.WithENV(&in.ENV),
+		coin1.WithName(&in.Name, true),
+		coin1.WithUnit(&in.Unit, true),
+		coin1.WithENV(&in.ENV, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

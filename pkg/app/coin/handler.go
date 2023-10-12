@@ -13,7 +13,8 @@ import (
 )
 
 type Handler struct {
-	ID                       *string
+	ID                       *uint32
+	EntID                    *string
 	AppID                    *string
 	CoinTypeID               *string
 	Name                     *string
@@ -45,23 +46,42 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
-		}
-		_, err := uuid.Parse(*id)
-		if err != nil {
-			return err
 		}
 		h.ID = id
 		return nil
 	}
 }
 
-func WithAppID(id *string) func(context.Context, *Handler) error {
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
+		_, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.EntID = id
+		return nil
+	}
+}
+
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return nil
 		}
 		_app, err := appmwcli.GetApp(ctx, *id)
@@ -76,9 +96,12 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
+func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid cointypeid")
+			}
 			return nil
 		}
 		_coin, err := coinmwcli.GetCoin(ctx, *id)
@@ -93,9 +116,12 @@ func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithName(name *string) func(context.Context, *Handler) error {
+func WithName(name *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if name == nil {
+			if must {
+				return fmt.Errorf("invalid name")
+			}
 			return nil
 		}
 		if *name == "" {
@@ -106,30 +132,33 @@ func WithName(name *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithDisplayNames(names []string) func(context.Context, *Handler) error {
+func WithDisplayNames(names []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.DisplayNames = names
 		return nil
 	}
 }
 
-func WithLogo(logo *string) func(context.Context, *Handler) error {
+func WithLogo(logo *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Logo = logo
 		return nil
 	}
 }
 
-func WithForPay(forPay *bool) func(context.Context, *Handler) error {
+func WithForPay(forPay *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.ForPay = forPay
 		return nil
 	}
 }
 
-func WithWithdrawAutoReviewAmount(amount *string) func(context.Context, *Handler) error {
+func WithWithdrawAutoReviewAmount(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid withdrawautoreviewamount")
+			}
 			return nil
 		}
 		_, err := decimal.NewFromString(*amount)
@@ -141,9 +170,12 @@ func WithWithdrawAutoReviewAmount(amount *string) func(context.Context, *Handler
 	}
 }
 
-func WithMarketValue(amount *string) func(context.Context, *Handler) error {
+func WithMarketValue(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid marketvalue")
+			}
 			return nil
 		}
 		_, err := decimal.NewFromString(*amount)
@@ -155,9 +187,12 @@ func WithMarketValue(amount *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithSettlePercent(percent *uint32) func(context.Context, *Handler) error {
+func WithSettlePercent(percent *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if percent == nil {
+			if must {
+				return fmt.Errorf("invalid settlepercent")
+			}
 			return nil
 		}
 		if *percent == 0 {
@@ -168,16 +203,19 @@ func WithSettlePercent(percent *uint32) func(context.Context, *Handler) error {
 	}
 }
 
-func WithSettleTips(tips []string) func(context.Context, *Handler) error {
+func WithSettleTips(tips []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.SettleTips = tips
 		return nil
 	}
 }
 
-func WithSetter(id *string) func(context.Context, *Handler) error {
+func WithSetter(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid setter")
+			}
 			return nil
 		}
 		_, err := uuid.Parse(*id)
@@ -189,23 +227,26 @@ func WithSetter(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithProductPage(page *string) func(context.Context, *Handler) error {
+func WithProductPage(page *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.ProductPage = page
 		return nil
 	}
 }
 
-func WithDisabled(disabled *bool) func(context.Context, *Handler) error {
+func WithDisabled(disabled *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Disabled = disabled
 		return nil
 	}
 }
 
-func WithDailyRewardAmount(amount *string) func(context.Context, *Handler) error {
+func WithDailyRewardAmount(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid dailyrewardamount")
+			}
 			return nil
 		}
 		_, err := decimal.NewFromString(*amount)
@@ -217,23 +258,26 @@ func WithDailyRewardAmount(amount *string) func(context.Context, *Handler) error
 	}
 }
 
-func WithDisplay(display *bool) func(context.Context, *Handler) error {
+func WithDisplay(display *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Display = display
 		return nil
 	}
 }
 
-func WithDisplayIndex(index *uint32) func(context.Context, *Handler) error {
+func WithDisplayIndex(index *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.DisplayIndex = index
 		return nil
 	}
 }
 
-func WithMaxAmountPerWithdraw(amount *string) func(context.Context, *Handler) error {
+func WithMaxAmountPerWithdraw(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid maxamountperwithdraw")
+			}
 			return nil
 		}
 		_, err := decimal.NewFromString(*amount)

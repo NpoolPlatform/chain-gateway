@@ -15,9 +15,9 @@ import (
 func (s *Server) UpdateFeed(ctx context.Context, in *npool.UpdateFeedRequest) (*npool.UpdateFeedResponse, error) {
 	handler, err := feed1.NewHandler(
 		ctx,
-		feed1.WithID(&in.ID),
-		feed1.WithFeedFiatName(in.FeedFiatName),
-		feed1.WithDisabled(in.Disabled),
+		feed1.WithID(&in.ID, true),
+		feed1.WithFeedFiatName(in.FeedFiatName, false),
+		feed1.WithDisabled(in.Disabled, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
