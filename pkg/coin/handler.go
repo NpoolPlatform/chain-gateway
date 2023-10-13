@@ -6,6 +6,7 @@ import (
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/const"
 	coinmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/coin"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -38,6 +39,14 @@ type Handler struct {
 	NeedMemo                    *bool
 	RefreshCurrency             *bool
 	CheckNewAddressBalance      *bool
+	ChainType                   *string
+	ChainNativeUnit             *string
+	ChainAtomicUnit             *string
+	ChainUnitExp                *uint32
+	GasType                     *basetypes.GasType
+	ChainID                     *string
+	ChainNickname               *string
+	ChainNativeCoinName         *string
 	Offset                      int32
 	Limit                       int32
 }
@@ -380,6 +389,129 @@ func WithRefreshCurrency(refresh *bool, must bool) func(context.Context, *Handle
 func WithCheckNewAddressBalance(check *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.CheckNewAddressBalance = check
+		return nil
+	}
+}
+
+func WithChainType(chainType *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if chainType == nil {
+			if must {
+				return fmt.Errorf("invalid chaintype")
+			}
+			return nil
+		}
+		if *chainType == "" {
+			return fmt.Errorf("invalid chaintype")
+		}
+		h.ChainType = chainType
+		return nil
+	}
+}
+
+func WithChainNativeUnit(unit *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if unit == nil {
+			if must {
+				return fmt.Errorf("invalid chainnativeunit")
+			}
+			return nil
+		}
+		if *unit == "" {
+			return fmt.Errorf("invalid nativeunit")
+		}
+		h.ChainNativeUnit = unit
+		return nil
+	}
+}
+
+func WithChainAtomicUnit(unit *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if unit == nil {
+			if must {
+				return fmt.Errorf("invalid chainatomicunit")
+			}
+			return nil
+		}
+		if *unit == "" {
+			return fmt.Errorf("invalid atomicunit")
+		}
+		h.ChainAtomicUnit = unit
+		return nil
+	}
+}
+
+func WithChainUnitExp(exp *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.ChainUnitExp = exp
+		return nil
+	}
+}
+
+func WithGasType(gasType *basetypes.GasType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if gasType == nil {
+			if must {
+				return fmt.Errorf("invalid gastype")
+			}
+			return nil
+		}
+		switch *gasType {
+		case basetypes.GasType_FixedGas:
+		case basetypes.GasType_DynamicGas:
+		case basetypes.GasType_GasUnsupported:
+		default:
+			return fmt.Errorf("invalid gastype")
+		}
+		h.GasType = gasType
+		return nil
+	}
+}
+
+func WithChainID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid chainid")
+			}
+			return nil
+		}
+		if *id == "" {
+			return fmt.Errorf("invalid chainid")
+		}
+		h.ChainID = id
+		return nil
+	}
+}
+
+func WithChainNickname(nickname *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if nickname == nil {
+			if must {
+				return fmt.Errorf("invalid chainnickname")
+			}
+			return nil
+		}
+		if *nickname == "" {
+			return fmt.Errorf("invalid nickname")
+		}
+		h.ChainNickname = nickname
+		return nil
+	}
+}
+
+func WithChainNativeCoinName(name *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if name == nil {
+			if must {
+				return fmt.Errorf("invalid chainnativecoinname")
+			}
+			return nil
+		}
+		if *name == "" {
+			return fmt.Errorf("invalid chainnativecoinname")
+		}
+		h.ChainNativeCoinName = name
 		return nil
 	}
 }
