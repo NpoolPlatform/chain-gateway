@@ -17,6 +17,8 @@ func (s *Server) CreateCoin(ctx context.Context, in *npool.CreateCoinRequest) (*
 		ctx,
 		appcoin1.WithAppID(&in.TargetAppID, true),
 		appcoin1.WithCoinTypeID(&in.CoinTypeID, true),
+		appcoin1.WithName(&in.Name, true),
+		appcoin1.WithLogo(&in.Logo, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

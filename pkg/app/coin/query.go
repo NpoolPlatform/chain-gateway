@@ -103,7 +103,7 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 
 func (h *Handler) GetCoin(ctx context.Context) (*npool.Coin, error) {
 	if h.EntID == nil {
-		return nil, fmt.Errorf("invalid id")
+		return nil, fmt.Errorf("invalid entid")
 	}
 
 	info, err := appcoinmwcli.GetCoin(ctx, *h.EntID)
