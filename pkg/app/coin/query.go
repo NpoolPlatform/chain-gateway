@@ -153,3 +153,19 @@ func (h *Handler) GetCoins(ctx context.Context) ([]*npool.Coin, uint32, error) {
 
 	return _infos, total, nil
 }
+
+func (h *Handler) GetCoinExt(ctx context.Context, info *appcoinmwpb.Coin) (*npool.Coin, error) {
+	h.AppID = &info.AppID
+
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*appcoinmwpb.Coin{info},
+	}
+
+	infos, err := handler.formalize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return infos[0], nil
+}

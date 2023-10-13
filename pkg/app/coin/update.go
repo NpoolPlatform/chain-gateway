@@ -16,7 +16,7 @@ func (h *Handler) UpdateCoin(ctx context.Context) (*npool.Coin, error) {
 
 	// TODO: check appid / cointypeid / id
 
-	_, err := appcoinmwcli.UpdateCoin(ctx, &appcoinmwpb.CoinReq{
+	info, err := appcoinmwcli.UpdateCoin(ctx, &appcoinmwpb.CoinReq{
 		ID:                       h.ID,
 		Name:                     h.Name,
 		DisplayNames:             h.DisplayNames,
@@ -36,6 +36,8 @@ func (h *Handler) UpdateCoin(ctx context.Context) (*npool.Coin, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	h.EntID = &info.EntID
 
 	return h.GetCoin(ctx)
 }
