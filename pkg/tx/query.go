@@ -66,6 +66,7 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Tx, error) {
 	for _, info := range h.infos {
 		infos = append(infos, &npool.Tx{
 			ID:            info.ID,
+			EntID:         info.EntID,
 			CoinTypeID:    info.CoinTypeID,
 			CoinName:      info.CoinName,
 			CoinLogo:      info.CoinLogo,
