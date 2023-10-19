@@ -36,6 +36,9 @@ func (h *Handler) UpdateCoin(ctx context.Context) (*npool.Coin, error) {
 	if err != nil {
 		return nil, err
 	}
+	if info == nil {
+		return nil, fmt.Errorf("invalid coin")
+	}
 
 	h.EntID = &info.EntID
 
