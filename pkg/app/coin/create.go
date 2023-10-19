@@ -12,8 +12,6 @@ func (h *Handler) CreateCoin(ctx context.Context) (*npool.Coin, error) {
 	info, err := appcoinmwcli.CreateCoin(ctx, &appcoinmwpb.CoinReq{
 		AppID:      h.AppID,
 		CoinTypeID: h.CoinTypeID,
-		Name:       h.Name,
-		Logo:       h.Logo,
 	})
 	if err != nil {
 		return nil, err
