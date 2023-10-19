@@ -7,6 +7,7 @@ import (
 
 	appcoin "github.com/NpoolPlatform/chain-gateway/api/app/coin"
 	"github.com/NpoolPlatform/chain-gateway/api/app/coin/description"
+	"github.com/NpoolPlatform/chain-gateway/api/chain"
 	"github.com/NpoolPlatform/chain-gateway/api/coin"
 	coincurrency "github.com/NpoolPlatform/chain-gateway/api/coin/currency"
 	coincurrencyfeed "github.com/NpoolPlatform/chain-gateway/api/coin/currency/feed"
@@ -42,8 +43,10 @@ func Register(server grpc.ServiceRegistrar) {
 	fiatcurrency.Register(server)
 	fiatcurrencyfeed.Register(server)
 	fiatcurrencyhis.Register(server)
+	chain.Register(server)
 }
 
+//nolint:gocyclo
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
 	if err := chaingw.RegisterGatewayHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
 		return err
@@ -85,6 +88,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := fiatcurrencyhis.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := chain.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
