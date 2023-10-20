@@ -15,7 +15,7 @@ import (
 func (s *Server) GetCoinDescriptions(ctx context.Context, in *npool.GetCoinDescriptionsRequest) (*npool.GetCoinDescriptionsResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
-		description1.WithAppID(&in.AppID),
+		description1.WithAppID(&in.AppID, true),
 		description1.WithOffset(in.GetOffset()),
 		description1.WithLimit(in.GetLimit()),
 	)
@@ -47,7 +47,7 @@ func (s *Server) GetCoinDescriptions(ctx context.Context, in *npool.GetCoinDescr
 func (s *Server) GetAppCoinDescriptions(ctx context.Context, in *npool.GetAppCoinDescriptionsRequest) (*npool.GetAppCoinDescriptionsResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
-		description1.WithAppID(&in.TargetAppID),
+		description1.WithAppID(&in.TargetAppID, true),
 		description1.WithOffset(in.GetOffset()),
 		description1.WithLimit(in.GetLimit()),
 	)

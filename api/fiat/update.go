@@ -15,10 +15,10 @@ import (
 func (s *Server) UpdateFiat(ctx context.Context, in *npool.UpdateFiatRequest) (*npool.UpdateFiatResponse, error) {
 	handler, err := fiat1.NewHandler(
 		ctx,
-		fiat1.WithID(&in.ID),
-		fiat1.WithName(in.Name),
-		fiat1.WithLogo(in.Logo),
-		fiat1.WithUnit(in.Unit),
+		fiat1.WithID(&in.ID, true),
+		fiat1.WithName(in.Name, false),
+		fiat1.WithLogo(in.Logo, false),
+		fiat1.WithUnit(in.Unit, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

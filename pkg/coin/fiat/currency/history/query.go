@@ -16,10 +16,10 @@ func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, 
 		conds.CoinTypeIDs = &basetypes.StringSliceVal{Op: cruder.IN, Value: h.CoinTypeIDs}
 	}
 	if h.StartAt != nil {
-		conds.StartAt = &basetypes.Uint32Val{Op: cruder.GTE, Value: *h.StartAt}
+		conds.StartAt = &basetypes.Uint32Val{Op: cruder.EQ, Value: *h.StartAt}
 	}
 	if h.EndAt != nil {
-		conds.EndAt = &basetypes.Uint32Val{Op: cruder.LTE, Value: *h.EndAt}
+		conds.EndAt = &basetypes.Uint32Val{Op: cruder.EQ, Value: *h.EndAt}
 	}
 	return currencyhismwcli.GetCurrencies(ctx, conds, h.Offset, h.Limit)
 }

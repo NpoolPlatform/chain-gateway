@@ -17,7 +17,7 @@ func (h *Handler) CreateCoin(ctx context.Context) (*npool.Coin, error) {
 		return nil, err
 	}
 
-	h.ID = &info.ID
+	h.EntID = &info.EntID
 
 	return h.GetCoin(ctx)
 }

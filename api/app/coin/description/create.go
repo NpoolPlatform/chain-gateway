@@ -15,11 +15,11 @@ import (
 func (s *Server) CreateCoinDescription(ctx context.Context, in *npool.CreateCoinDescriptionRequest) (*npool.CreateCoinDescriptionResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
-		description1.WithAppID(&in.AppID),
-		description1.WithCoinTypeID(&in.CoinTypeID),
-		description1.WithUsedFor(&in.UsedFor),
-		description1.WithTitle(&in.Title),
-		description1.WithMessage(&in.Message),
+		description1.WithAppID(&in.AppID, true),
+		description1.WithCoinTypeID(&in.CoinTypeID, true),
+		description1.WithUsedFor(&in.UsedFor, true),
+		description1.WithTitle(&in.Title, true),
+		description1.WithMessage(&in.Message, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -49,11 +49,11 @@ func (s *Server) CreateCoinDescription(ctx context.Context, in *npool.CreateCoin
 func (s *Server) CreateAppCoinDescription(ctx context.Context, in *npool.CreateAppCoinDescriptionRequest) (*npool.CreateAppCoinDescriptionResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
-		description1.WithAppID(&in.TargetAppID),
-		description1.WithCoinTypeID(&in.CoinTypeID),
-		description1.WithUsedFor(&in.UsedFor),
-		description1.WithTitle(&in.Title),
-		description1.WithMessage(&in.Message),
+		description1.WithAppID(&in.TargetAppID, true),
+		description1.WithCoinTypeID(&in.CoinTypeID, true),
+		description1.WithUsedFor(&in.UsedFor, true),
+		description1.WithTitle(&in.Title, true),
+		description1.WithMessage(&in.Message, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

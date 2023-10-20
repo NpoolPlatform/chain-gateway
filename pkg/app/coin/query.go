@@ -45,6 +45,7 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 	for _, info := range h.infos {
 		_info := &npool.Coin{
 			ID:                          info.ID,
+			EntID:                       info.EntID,
 			AppID:                       info.AppID,
 			CoinTypeID:                  info.CoinTypeID,
 			Name:                        info.Name,
@@ -102,11 +103,11 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 }
 
 func (h *Handler) GetCoin(ctx context.Context) (*npool.Coin, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
+	if h.EntID == nil {
+		return nil, fmt.Errorf("invalid entid")
 	}
 
-	info, err := appcoinmwcli.GetCoin(ctx, *h.ID)
+	info, err := appcoinmwcli.GetCoin(ctx, *h.EntID)
 	if err != nil {
 		return nil, err
 	}
@@ -152,4 +153,20 @@ func (h *Handler) GetCoins(ctx context.Context) ([]*npool.Coin, uint32, error) {
 	}
 
 	return _infos, total, nil
+}
+
+func (h *Handler) GetCoinExt(ctx context.Context, info *appcoinmwpb.Coin) (*npool.Coin, error) {
+	h.AppID = &info.AppID
+
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*appcoinmwpb.Coin{info},
+	}
+
+	infos, err := handler.formalize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return infos[0], nil
 }

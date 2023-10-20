@@ -14,9 +14,10 @@ import (
 func (s *Server) UpdateCoinDescription(ctx context.Context, in *npool.UpdateCoinDescriptionRequest) (*npool.UpdateCoinDescriptionResponse, error) {
 	handler, err := description1.NewHandler(
 		ctx,
-		description1.WithID(&in.ID),
-		description1.WithTitle(in.Title),
-		description1.WithMessage(in.Message),
+		description1.WithID(&in.ID, true),
+		description1.WithAppID(&in.AppID, true),
+		description1.WithTitle(in.Title, false),
+		description1.WithMessage(in.Message, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

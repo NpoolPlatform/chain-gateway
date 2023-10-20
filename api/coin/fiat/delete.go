@@ -15,7 +15,7 @@ import (
 func (s *Server) DeleteCoinFiat(ctx context.Context, in *npool.DeleteCoinFiatRequest) (*npool.DeleteCoinFiatResponse, error) {
 	handler, err := coinfiat1.NewHandler(
 		ctx,
-		coinfiat1.WithID(&in.ID),
+		coinfiat1.WithID(&in.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

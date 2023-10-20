@@ -15,7 +15,7 @@ import (
 func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npool.GetCoinsResponse, error) {
 	handler, err := appcoin1.NewHandler(
 		ctx,
-		appcoin1.WithAppID(&in.AppID),
+		appcoin1.WithAppID(&in.AppID, true),
 		appcoin1.WithOffset(in.GetOffset()),
 		appcoin1.WithLimit(in.GetLimit()),
 	)
@@ -47,7 +47,7 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 func (s *Server) GetAppCoins(ctx context.Context, in *npool.GetAppCoinsRequest) (*npool.GetAppCoinsResponse, error) {
 	handler, err := appcoin1.NewHandler(
 		ctx,
-		appcoin1.WithAppID(&in.TargetAppID),
+		appcoin1.WithAppID(&in.TargetAppID, true),
 		appcoin1.WithOffset(in.GetOffset()),
 		appcoin1.WithLimit(in.GetLimit()),
 	)

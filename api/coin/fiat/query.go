@@ -15,7 +15,7 @@ import (
 func (s *Server) GetCoinFiats(ctx context.Context, in *npool.GetCoinFiatsRequest) (*npool.GetCoinFiatsResponse, error) {
 	handler, err := coinfiat1.NewHandler(
 		ctx,
-		coinfiat1.WithCoinTypeIDs(in.GetCoinTypeIDs()),
+		coinfiat1.WithCoinTypeIDs(in.GetCoinTypeIDs(), false),
 		coinfiat1.WithOffset(in.GetOffset()),
 		coinfiat1.WithLimit(in.GetLimit()),
 	)

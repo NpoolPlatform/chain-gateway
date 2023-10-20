@@ -2,6 +2,7 @@ package currency
 
 import (
 	"context"
+	"fmt"
 
 	constant "github.com/NpoolPlatform/chain-gateway/pkg/const"
 
@@ -25,9 +26,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
+func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid cointypeid")
+			}
 			return nil
 		}
 		if _, err := uuid.Parse(*id); err != nil {
@@ -38,9 +42,12 @@ func WithCoinTypeID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCoinTypeIDs(ids []string) func(context.Context, *Handler) error {
+func WithCoinTypeIDs(ids []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if len(ids) == 0 {
+			if must {
+				return fmt.Errorf("invalid cointypeids")
+			}
 			return nil
 		}
 		for _, id := range ids {

@@ -15,9 +15,9 @@ import (
 func (s *Server) CreateFeed(ctx context.Context, in *npool.CreateFeedRequest) (*npool.CreateFeedResponse, error) {
 	handler, err := feed1.NewHandler(
 		ctx,
-		feed1.WithCoinTypeID(&in.CoinTypeID),
-		feed1.WithFeedType(&in.FeedType),
-		feed1.WithFeedCoinName(&in.FeedCoinName),
+		feed1.WithCoinTypeID(&in.CoinTypeID, true),
+		feed1.WithFeedType(&in.FeedType, true),
+		feed1.WithFeedCoinName(&in.FeedCoinName, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -15,12 +15,16 @@ func (h *Handler) DeleteCoin(ctx context.Context) (*npool.Coin, error) {
 
 	// TODO: check appid / cointypeid / id
 
-	info, err := h.GetCoin(ctx)
+	deleteInfo, err := appcoinmwcli.DeleteCoin(ctx, *h.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = appcoinmwcli.DeleteCoin(ctx, *h.ID)
+	if deleteInfo == nil {
+		return nil, nil
+	}
+
+	info, err := h.GetCoinExt(ctx, deleteInfo)
 	if err != nil {
 		return nil, err
 	}

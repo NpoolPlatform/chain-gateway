@@ -25,11 +25,11 @@ func (h *Handler) GetCurrencies(ctx context.Context) ([]*currencymwpb.Currency, 
 	if h.StartAt != nil {
 		startAt = *h.StartAt
 	}
-	conds.StartAt = &basetypes.Uint32Val{Op: cruder.GTE, Value: startAt}
+	conds.StartAt = &basetypes.Uint32Val{Op: cruder.EQ, Value: startAt}
 	endAt := uint32(time.Now().Unix())
 	if h.EndAt != nil {
 		endAt = *h.EndAt
 	}
-	conds.EndAt = &basetypes.Uint32Val{Op: cruder.LTE, Value: endAt}
+	conds.EndAt = &basetypes.Uint32Val{Op: cruder.EQ, Value: endAt}
 	return currencyhismwcli.GetCurrencies(ctx, conds, h.Offset, h.Limit)
 }
