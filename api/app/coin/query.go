@@ -16,6 +16,7 @@ func (s *Server) GetCoins(ctx context.Context, in *npool.GetCoinsRequest) (*npoo
 	handler, err := appcoin1.NewHandler(
 		ctx,
 		appcoin1.WithAppID(&in.AppID, true),
+		appcoin1.WithForPay(in.ForPay, false),
 		appcoin1.WithOffset(in.GetOffset()),
 		appcoin1.WithLimit(in.GetLimit()),
 	)

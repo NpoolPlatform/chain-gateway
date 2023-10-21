@@ -135,6 +135,9 @@ func (h *Handler) GetCoins(ctx context.Context) ([]*npool.Coin, uint32, error) {
 	if h.AppID != nil {
 		conds.AppID = &basetypes.StringVal{Op: cruder.EQ, Value: *h.AppID}
 	}
+	if h.ForPay != nil {
+		conds.ForPay = &basetypes.BoolVal{Op: cruder.EQ, Value: *h.ForPay}
+	}
 
 	infos, total, err := appcoinmwcli.GetCoins(ctx, conds, h.Offset, h.Limit)
 	if err != nil {
