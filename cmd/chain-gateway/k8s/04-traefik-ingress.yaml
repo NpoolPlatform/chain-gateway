@@ -43,6 +43,10 @@ spec:
             backend:
               serviceName: chain-gateway
               servicePort: 50580
+          - path: /api/chain/v1/get/fiatcurrencies
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
           - path: /api/chain/v1/get/coinfiatcurrencies
             backend:
               serviceName: chain-gateway
