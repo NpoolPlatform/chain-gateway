@@ -25,7 +25,7 @@ func (h *queryHandler) formalizeAccounts(ctx context.Context, txs []*npool.Tx) (
 	}
 
 	accs, _, err := accmwcli.GetAccounts(ctx, &accmwpb.Conds{
-		IDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: ids},
+		EntIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: ids},
 	}, 0, int32(len(ids)))
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (h *queryHandler) formalizeAccounts(ctx context.Context, txs []*npool.Tx) (
 
 	accMap := map[string]*accmwpb.Account{}
 	for _, acc := range accs {
-		accMap[acc.ID] = acc
+		accMap[acc.EntID] = acc
 	}
 
 	for _, info := range txs {
