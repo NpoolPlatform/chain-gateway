@@ -17,6 +17,7 @@ func (s *Server) CreateCoinUsedFor(ctx context.Context, in *npool.CreateCoinUsed
 		ctx,
 		usedfor1.WithCoinTypeID(&in.CoinTypeID, true),
 		usedfor1.WithUsedFor(&in.UsedFor, true),
+		usedfor1.WithPriority(in.Priority, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

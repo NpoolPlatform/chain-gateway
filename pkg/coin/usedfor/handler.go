@@ -17,6 +17,7 @@ type Handler struct {
 	CoinTypeIDs []string
 	UsedFor     *types.CoinUsedFor
 	UsedFors    []types.CoinUsedFor
+	Priority    *uint32
 	Offset      int32
 	Limit       int32
 }
@@ -100,6 +101,13 @@ func WithUsedFors(usedFors []types.CoinUsedFor, must bool) func(context.Context,
 			}
 		}
 		h.UsedFors = usedFors
+		return nil
+	}
+}
+
+func WithPriority(n *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Priority = n
 		return nil
 	}
 }

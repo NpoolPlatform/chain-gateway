@@ -11,5 +11,6 @@ func (h *Handler) CreateCoinUsedFor(ctx context.Context) (*coinusedformwpb.CoinU
 	return coinusedformwcli.CreateCoinUsedFor(ctx, &coinusedformwpb.CoinUsedForReq{
 		CoinTypeID: h.CoinTypeID,
 		UsedFor:    h.UsedFor,
+		Priority:   h.Priority,
 	})
 }
