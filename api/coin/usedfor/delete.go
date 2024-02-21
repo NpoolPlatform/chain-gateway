@@ -16,6 +16,7 @@ func (s *Server) DeleteCoinUsedFor(ctx context.Context, in *npool.DeleteCoinUsed
 	handler, err := coinusedfor1.NewHandler(
 		ctx,
 		coinusedfor1.WithID(&in.ID, true),
+		coinusedfor1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -13,6 +13,7 @@ import (
 
 type Handler struct {
 	ID          *uint32
+	EntID       *string
 	CoinTypeID  *string
 	CoinTypeIDs []string
 	UsedFor     *types.CoinUsedFor
@@ -35,6 +36,22 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.ID = id
+		return nil
+	}
+}
+
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
+		if _, err := uuid.Parse(*id); err != nil {
+			return err
+		}
+		h.EntID = id
 		return nil
 	}
 }
