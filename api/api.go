@@ -14,6 +14,7 @@ import (
 	coincurrencyhis "github.com/NpoolPlatform/chain-gateway/api/coin/currency/history"
 	coinfiat "github.com/NpoolPlatform/chain-gateway/api/coin/fiat"
 	coinfiatcurrencyhis "github.com/NpoolPlatform/chain-gateway/api/coin/fiat/currency/history"
+	coinusedfor "github.com/NpoolPlatform/chain-gateway/api/coin/usedfor"
 	"github.com/NpoolPlatform/chain-gateway/api/fiat"
 	fiatcurrency "github.com/NpoolPlatform/chain-gateway/api/fiat/currency"
 	fiatcurrencyfeed "github.com/NpoolPlatform/chain-gateway/api/fiat/currency/feed"
@@ -44,6 +45,7 @@ func Register(server grpc.ServiceRegistrar) {
 	fiatcurrencyfeed.Register(server)
 	fiatcurrencyhis.Register(server)
 	chain.Register(server)
+	coinusedfor.Register(server)
 }
 
 //nolint:gocyclo
@@ -91,6 +93,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := chain.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := coinusedfor.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
