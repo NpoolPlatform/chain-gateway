@@ -67,18 +67,6 @@ spec:
             backend:
               serviceName: chain-gateway
               servicePort: 50580
-          - path: /api/chain/v1/get/coinusedfors
-            backend:
-              serviceName: chain-gateway
-              servicePort: 50580
-          - path: /api/chain/v1/create/coinusedfor
-            backend:
-              serviceName: chain-gateway
-              servicePort: 50580
-          - path: /api/chain/v1/delete/coinusedfor
-            backend:
-              serviceName: chain-gateway
-              servicePort: 50580
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
@@ -236,6 +224,18 @@ spec:
               serviceName: chain-gateway
               servicePort: 50580
           - path: /api/chain/v1/get/chains
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/get/coinusedfors
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/create/coinusedfor
+            backend:
+              serviceName: chain-gateway
+              servicePort: 50580
+          - path: /api/chain/v1/delete/coinusedfor
             backend:
               serviceName: chain-gateway
               servicePort: 50580
