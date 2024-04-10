@@ -15,34 +15,38 @@ import (
 
 type queryHandler struct {
 	*Handler
-	infos []*appcoinmwpb.Coin
-	total uint32
+	coins        []*appcoinmwpb.Coin
+	infos        []*npool.Coin
+	defaultGoods map[string]*appdefaultgoodmwpb.Default
+	total        uint32
 }
 
-func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
-	ids := []string{}
-	for _, info := range h.infos {
-		ids = append(ids, info.CoinTypeID)
-	}
-
+func (h *queryHandler) getDefaultGoods(ctx context.Context) error {
+	coinTypeIDs := func() (_coinTypeIDs []string) {
+		for _, info := range h.coins {
+			_coinTypeIDs = append(_coinTypeIDs, info.CoinTypeID)
+		}
+		return
+	}()
 	conds := &appdefaultgoodmwpb.Conds{
-		CoinTypeIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: ids},
+		CoinTypeIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: coinTypeIDs},
 	}
 	if h.AppID != nil {
 		conds.AppID = &basetypes.StringVal{Op: cruder.EQ, Value: *h.AppID}
 	}
-	infos, _, err := appdefaultgoodmwcli.GetDefaults(ctx, conds, 0, int32(len(ids)))
+	defaultGoods, _, err := appdefaultgoodmwcli.GetDefaults(ctx, conds, 0, int32(len(coinTypeIDs)))
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	infoMap := map[string]*appdefaultgoodmwpb.Default{}
-	for _, info := range infos {
-		infoMap[info.AppID+info.CoinTypeID] = info
+	h.defaultGoods = map[string]*appdefaultgoodmwpb.Default{}
+	for _, defaultGood := range defaultGoods {
+		h.defaultGoods[defaultGood.AppID+defaultGood.CoinTypeID] = defaultGood
 	}
+	return nil
+}
 
-	_infos := []*npool.Coin{}
-	for _, info := range h.infos {
+func (h *queryHandler) formalize() {
+	for _, info := range h.coins {
 		_info := &npool.Coin{
 			ID:                          info.ID,
 			EntID:                       info.EntID,
@@ -91,15 +95,12 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Coin, error) {
 			LeastTransferAmount:         info.LeastTransferAmount,
 			NeedMemo:                    info.NeedMemo,
 		}
-
-		dinfo, ok := infoMap[info.AppID+info.CoinTypeID]
+		defaultGood, ok := h.defaultGoods[info.AppID+info.CoinTypeID]
 		if ok {
-			_info.DefaultGoodID = &dinfo.AppGoodID
+			_info.DefaultGoodID = &defaultGood.AppGoodID
 		}
-
-		_infos = append(_infos, _info)
+		h.infos = append(h.infos, _info)
 	}
-	return _infos, nil
 }
 
 func (h *Handler) GetCoin(ctx context.Context) (*npool.Coin, error) {
@@ -119,15 +120,16 @@ func (h *Handler) GetCoin(ctx context.Context) (*npool.Coin, error) {
 
 	handler := &queryHandler{
 		Handler: h,
-		infos:   []*appcoinmwpb.Coin{info},
+		coins:   []*appcoinmwpb.Coin{info},
 	}
 
-	infos, err := handler.formalize(ctx)
-	if err != nil {
+	if err := handler.getDefaultGoods(ctx); err != nil {
 		return nil, err
 	}
 
-	return infos[0], nil
+	handler.formalize()
+
+	return handler.infos[0], nil
 }
 
 func (h *Handler) GetCoins(ctx context.Context) ([]*npool.Coin, uint32, error) {
@@ -139,23 +141,24 @@ func (h *Handler) GetCoins(ctx context.Context) ([]*npool.Coin, uint32, error) {
 		conds.ForPay = &basetypes.BoolVal{Op: cruder.EQ, Value: *h.ForPay}
 	}
 
-	infos, total, err := appcoinmwcli.GetCoins(ctx, conds, h.Offset, h.Limit)
+	coins, total, err := appcoinmwcli.GetCoins(ctx, conds, h.Offset, h.Limit)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	handler := &queryHandler{
 		Handler: h,
-		infos:   infos,
+		coins:   coins,
 		total:   total,
 	}
 
-	_infos, err := handler.formalize(ctx)
-	if err != nil {
+	if err := handler.getDefaultGoods(ctx); err != nil {
 		return nil, 0, err
 	}
 
-	return _infos, total, nil
+	handler.formalize()
+
+	return handler.infos, total, nil
 }
 
 func (h *Handler) GetCoinExt(ctx context.Context, info *appcoinmwpb.Coin) (*npool.Coin, error) {
@@ -163,13 +166,13 @@ func (h *Handler) GetCoinExt(ctx context.Context, info *appcoinmwpb.Coin) (*npoo
 
 	handler := &queryHandler{
 		Handler: h,
-		infos:   []*appcoinmwpb.Coin{info},
+		coins:   []*appcoinmwpb.Coin{info},
 	}
-
-	infos, err := handler.formalize(ctx)
-	if err != nil {
+	if err := handler.getDefaultGoods(ctx); err != nil {
 		return nil, err
 	}
 
-	return infos[0], nil
+	handler.formalize()
+
+	return handler.infos[0], nil
 }
