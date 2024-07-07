@@ -8,10 +8,6 @@ import (
 	chainmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/chain"
 )
 
-type queryHandler struct {
-	*Handler
-}
-
 func (h *Handler) GetChains(ctx context.Context) ([]*chainmwpb.Chain, uint32, error) {
 	return chainmwcli.GetChains(ctx, &chainmwpb.Conds{}, h.Offset, h.Limit)
 }
