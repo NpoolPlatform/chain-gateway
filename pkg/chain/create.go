@@ -5,6 +5,7 @@ import (
 
 	chainmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/chain"
 	chainmwpb "github.com/NpoolPlatform/message/npool/chain/mw/v1/chain"
+
 	"github.com/google/uuid"
 )
 

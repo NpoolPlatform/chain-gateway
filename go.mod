@@ -6,11 +6,12 @@ require (
 	github.com/NpoolPlatform/account-middleware v0.0.0-20231205074056-0cc5ad44fac5
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20240125023515-2ea7b44eae0d
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20231015112137-254853c60eec
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20240705094801-a183b6c91142
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20240710092926-b628bbd1e797
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20240507084859-362174af9b92
 	github.com/NpoolPlatform/good-middleware v0.0.0-20240525100138-23fec8e8e6a0
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20240323085036-7679b4818ce7
-	github.com/NpoolPlatform/message v0.0.0-20240705102915-eb49be92bf65
+	github.com/NpoolPlatform/message v0.0.0-20240710091533-d5954b5f119d
+	github.com/NpoolPlatform/sphinx-proxy v0.0.0-20240710094355-698575419b05
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
@@ -25,20 +26,15 @@ require (
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.0.7 // indirect
 	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
-	github.com/miekg/dns v1.1.48 // indirect
-	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.opentelemetry.io/otel v1.10.0 // indirect
 	go.opentelemetry.io/otel/trace v1.10.0 // indirect
-	golang.org/x/tools v0.7.0 // indirect
 )
 
 require (
-	ariga.io/atlas v0.10.0 // indirect
 	entgo.io/ent v0.12.0 // indirect
 	github.com/Shonminh/apollo-client v0.4.0 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect
@@ -55,7 +51,6 @@ require (
 	github.com/go-chassis/openlog v1.1.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
