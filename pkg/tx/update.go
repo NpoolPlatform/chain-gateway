@@ -25,7 +25,7 @@ func (h *Handler) UpdateTx(ctx context.Context) (*npool.Tx, error) {
 		return nil, wlog.Errorf("invalid tx")
 	}
 	if tx.State != basetypes.TxState_TxStateFail {
-		return nil, wlog.Errorf("permission deniec")
+		return nil, wlog.Errorf("permission denied")
 	}
 
 	tx1, err := sphinxproxycli.GetTransaction(ctx, tx.EntID)
