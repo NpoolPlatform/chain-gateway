@@ -5,6 +5,7 @@ import (
 
 	accmwcli "github.com/NpoolPlatform/account-middleware/pkg/client/account"
 	txmwcli "github.com/NpoolPlatform/chain-middleware/pkg/client/tx"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	accmwpb "github.com/NpoolPlatform/message/npool/account/mw/v1/account"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
@@ -94,6 +95,28 @@ func (h *queryHandler) formalize(ctx context.Context) ([]*npool.Tx, error) {
 		return nil, err
 	}
 	return infos, nil
+}
+
+func (h *Handler) GetTx(ctx context.Context) (*npool.Tx, error) {
+	info, err := txmwcli.GetTx(ctx, *h.EntID)
+	if err != nil {
+		return nil, err
+	}
+	if info == nil {
+		return nil, wlog.Errorf("invalid tx")
+	}
+
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*txmwpb.Tx{info},
+	}
+
+	_infos, err := handler.formalize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return _infos[0], nil
 }
 
 func (h *Handler) GetTxs(ctx context.Context) ([]*npool.Tx, uint32, error) {

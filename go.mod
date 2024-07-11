@@ -3,14 +3,15 @@ module github.com/NpoolPlatform/chain-gateway
 go 1.17
 
 require (
-	github.com/NpoolPlatform/account-middleware v0.0.0-20231205074056-0cc5ad44fac5
+	github.com/NpoolPlatform/account-middleware v0.0.0-20240711084532-91d043378264
 	github.com/NpoolPlatform/appuser-middleware v0.0.0-20240125023515-2ea7b44eae0d
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20231015112137-254853c60eec
-	github.com/NpoolPlatform/chain-middleware v0.0.0-20240221035425-6a18ed14b910
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20230930023319-e48074d9472e
-	github.com/NpoolPlatform/good-middleware v0.0.0-20240220113816-171ea57a4b31
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20231008051607-f64457cf6ab6
-	github.com/NpoolPlatform/message v0.0.0-20240221034659-3e5afb83a663
+	github.com/NpoolPlatform/chain-middleware v0.0.0-20240711085642-93249f191575
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20240507084859-362174af9b92
+	github.com/NpoolPlatform/good-middleware v0.0.0-20240711084810-89bd6b946526
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20240323085036-7679b4818ce7
+	github.com/NpoolPlatform/message v0.0.0-20240711072021-f19e78dccbfb
+	github.com/NpoolPlatform/sphinx-proxy v0.0.0-20240710094355-698575419b05
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
@@ -25,21 +26,15 @@ require (
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.0.7 // indirect
 	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
-	github.com/miekg/dns v1.1.48 // indirect
-	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.2.0 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.opentelemetry.io/otel v1.10.0 // indirect
 	go.opentelemetry.io/otel/trace v1.10.0 // indirect
-	golang.org/x/tools v0.7.0 // indirect
 )
 
 require (
-	ariga.io/atlas v0.10.0 // indirect
 	entgo.io/ent v0.12.0 // indirect
 	github.com/Shonminh/apollo-client v0.4.0 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect
@@ -56,7 +51,6 @@ require (
 	github.com/go-chassis/openlog v1.1.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
